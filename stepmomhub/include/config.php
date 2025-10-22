@@ -38,7 +38,7 @@ define('DOODSTREAM_API_KEY', '229870x8szwvdp7v5iyiyf');
 // === PERUBAHAN DI SINI: Mengganti URL API Doodstream ===
 define('DOODSTREAM_CLONE_URL_BASE', 'https://doodapi.co/api/file/clone');
 // =======================================================
-define('DOODSTREAM_EMBED_NEW_DOMAIN', 'https://vide0.net'); 
+define('DOODSTREAM_EMBED_NEW_DOMAIN', 'https://dsvplay.com'); 
 define('DOODSTREAM_EMBED_NEW_PATH', '/e/');
 
 // --- Konfigurasi Database ---
