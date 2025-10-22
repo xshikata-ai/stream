@@ -87,9 +87,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mass_data'])) {
 
         // Mengurutkan URL Hasil Kloning Sebelum Disimpan
         $vh_urls = []; $sw_urls = []; $dd_urls = []; $other_urls = [];
-        $vh_domains = [parse_url(EARNVIDS_EMBED_NEW_DOMAIN, PHP_URL_HOST)];
+        $vh_domains = [parse_url(EARNVIDS_EMBED_NEW_DOMAIN, PHP_URL_HOST), 'ryderjet.com'];
         $sw_domains = [parse_url(STREAMHG_EMBED_NEW_DOMAIN, PHP_URL_HOST), 'dhcplay.com', 'stbhg.click'];
-        $dd_domains = [parse_url(DOODSTREAM_EMBED_NEW_DOMAIN, PHP_URL_HOST), 'dood.re'];
+        $dd_domains = [parse_url(DOODSTREAM_EMBED_NEW_DOMAIN, PHP_URL_HOST), 'dood.re' 'dsvplay.com'];
 
         foreach ($cloned_embed_urls as $url) {
             $host = str_replace('www.', '', parse_url($url, PHP_URL_HOST));
