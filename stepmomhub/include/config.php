@@ -28,7 +28,7 @@ define('EARNVIDS_EMBED_NEW_PATH', '/v/');
 // --- Streamhg API Keys & Endpoints ---
 define('STREAMHG_API_KEY', '10400scgn1qre5c1on2l0');
 define('STREAMHG_CLONE_API_KEY', '27814i1rpu6ycnk94ugki');
-define('STREAMHG_SEARCH_URL', 'https://search.streamwish.com/files');
+define('STREAMHG_SEARCH_URL', 'https://search.streamhgapi.com/files');
 define('STREAMHG_CLONE_URL_BASE', 'https://streamhgapi.com/api/file/clone');
 define('STREAMHG_EMBED_NEW_DOMAIN', 'https://gradehgplus.com');
 define('STREAMHG_EMBED_NEW_PATH', '/e/');
