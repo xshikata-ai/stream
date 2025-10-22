@@ -1,0 +1,1121 @@
+/*
+=========================================
+PROYEK OBSIDIAN - CSS FINAL (SCROLL-FIX)
+=========================================
+*/
+
+/* 1. FONT & VARIASI GLOBAL (ASLI) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+    --bg-primary: #111111;
+    --bg-secondary: #191919;
+    --bg-tertiary: #242424;
+    --primary-accent: #D91881; /* Warna pink aksen asli dipertahankan */
+    --primary-accent-hover: #E33895;
+    --text-primary: #EDEDED;
+    --text-secondary: #9E9E9E;
+    --border-color: rgba(255, 255, 255, 0.1);
+    --glow-color: rgba(217, 24, 129, 0.2);
+    --font-family: 'Inter', sans-serif;
+    --border-radius-md: 12px;
+    --border-radius-lg: 16px;
+    --transition-speed: 0.4s;
+    --shadow: 0px 8px 24px rgba(0, 0, 0, 0.5);
+
+    /* Variabel default untuk kolom grid, akan ditimpa oleh PHP */
+    --grid-desktop-columns: 4;
+    --grid-mobile-columns: 2;
+}
+
+/* 2. RESET & GAYA DASAR (ASLI) */
+* {
+    margin: 0; padding: 0; box-sizing: border-box;
+}
+html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+body {
+    font-family: var(--font-family);
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+a {
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: color var(--transition-speed);
+}
+a:hover { color: var(--primary-accent); }
+ul { list-style: none; }
+img { max-width: 100%; display: block; }
+h1, h2, h3, h4 { line-height: 1.3; font-weight: 700; }
+.container { width: 92%; max-width: 1440px; margin: 0 auto; }
+
+/* 3. HEADER & NAVIGASI DESKTOP (ASLI) */
+.site-header {
+    padding: 1.5rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: var(--bg-primary); 
+    border-bottom: none; 
+}
+.header-container { display: flex; justify-content: space-between; align-items: center; }
+.site-logo { display: flex; align-items: center; gap: 12px; font-size: 1.5rem; font-weight: 800; }
+.site-logo .logo-icon { color: var(--primary-accent); }
+.site-logo-img {
+    height: 40px; 
+    width: auto;
+}
+.site-header {
+    padding: 1rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: var(--bg-primary); 
+    border-bottom: 1px solid var(--border-color);
+}
+.main-nav { display: none; } 
+@media (min-width: 1024px) {
+    .main-nav {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+}
+.nav-item { position: relative; }
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0.5rem 1rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    border-radius: 8px;
+    transition: all var(--transition-speed);
+}
+.nav-link:hover { color: var(--text-primary); background-color: var(--bg-tertiary); }
+.nav-link.active {
+    background-color: transparent;
+    color: var(--text-secondary); 
+    font-weight: 500;
+}
+.main-nav .home-link {
+    margin-left: 0; 
+}
+.nav-link span {
+    white-space: nowrap;
+}
+.nav-submenu {
+    position: absolute;
+    top: 120%;
+    left: 0;
+    background: var(--bg-tertiary);
+    border-radius: var(--border-radius-md);
+    padding: 0.5rem;
+    min-width: 220px;
+    z-index: 1001;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all var(--transition-speed);
+    box-shadow: var(--shadow);
+}
+.nav-item:hover .nav-submenu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+.nav-submenu li a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    color: var(--text-secondary);
+}
+.nav-submenu li a:hover {
+    background-color: var(--primary-accent);
+    color: #fff;
+}
+.nav-submenu .submenu-separator {
+    padding: 0.25rem 0;
+    margin: 0.25rem 0;
+    pointer-events: none;
+}
+.nav-submenu .submenu-separator hr {
+    border: none;
+    height: 1px;
+    background-color: var(--border-color);
+}
+
+/* 4. NAVIGASI MOBILE (ASLI) */
+.mobile-menu-toggle {
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 1.8rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    display: flex;
+    z-index: 2001;
+}
+@media (min-width: 1024px) {
+    .mobile-menu-toggle {
+        display: none;
+    }
+}
+.mobile-nav-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.7);
+    z-index: 1999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--transition-speed);
+}
+.mobile-nav-overlay.is-open {
+    opacity: 1;
+    visibility: visible;
+}
+.mobile-nav {
+    position: fixed;
+    top: 0; left: 0;
+    width: 280px;
+    height: 100%;
+    background: rgba(10, 10, 10, 0.4);
+    backdrop-filter: blur(50px);
+    -webkit-backdrop-filter: blur(50px);
+    z-index: 2000;
+    border-right: 1px solid var(--border-color);
+    transform: translateX(-100%);
+    transition: transform var(--transition-speed);
+    display: flex;
+    flex-direction: column;
+}
+.mobile-nav.is-open {
+    transform: translateX(0);
+}
+.mobile-menu-list {
+    padding: 2.5rem 1rem 1rem 1rem;
+    overflow-y: auto; flex-grow: 1;
+}
+
+/* 5. GAYA DROPDOWN KATEGORI MOBILE (ASLI) */
+.mobile-menu-link {
+    display: flex; align-items: center; gap: 1rem;
+    padding: 0.8rem 1rem; border-radius: 8px;
+    color: var(--text-secondary); font-weight: 500;
+    cursor: pointer;
+}
+.mobile-menu-link:hover, .submenu-is-open > .mobile-menu-link {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+.mobile-menu-link > span {
+    flex-grow: 1;
+}
+.dropdown-icon {
+    margin-left: auto;
+    transition: transform var(--transition-speed);
+}
+.submenu-is-open .dropdown-icon {
+    transform: rotate(180deg);
+}
+.submenu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out;
+    padding-left: 1.5rem;
+    list-style-position: inside;
+}
+.submenu-is-open > .submenu {
+    max-height: 500px;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+.submenu li a {
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+.submenu li a:hover {
+    background-color: var(--primary-accent);
+    color: #fff;
+}
+.submenu li a .submenu-icon {
+    font-size: 1.1rem;
+}
+
+/* 6. HALAMAN UTAMA & VIDEO TERKAIT (GAYA ASLI) */
+.video-section {
+    padding: 2.5rem 0 1rem 0;
+}
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem; 
+    position: relative; 
+    padding-bottom: 0;
+    height: 40px; 
+    overflow: hidden; 
+    border-bottom: none; 
+}
+.section-header::after {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: linear-gradient(90deg, #FFC107, #FF4500); 
+}
+.section-title {
+    position: relative;
+    display: flex; 
+    align-items: center; 
+    gap: 0.5rem; 
+    font-size: 0.9rem; 
+    font-weight: 700; 
+    color: white; 
+    padding: 5px 10px; 
+    background: linear-gradient(45deg, #FFC107, #FF4500); 
+    border-radius: 0 6px 6px 0; 
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4); 
+    margin-right: 0; 
+    z-index: 2; 
+    height: 100%; 
+    line-height: 1; 
+}
+.section-title .icon {
+    font-size: 1.1em; 
+    color: white; 
+    background: none; 
+    -webkit-background-clip: unset; 
+    -webkit-text-fill-color: unset; 
+}
+.section-title span {
+    color: white; 
+    margin-top: 0; 
+}
+.video-card {
+    background: var(--bg-secondary);
+    border-radius: var(--border-radius-md);
+    overflow: hidden;
+    border: 1px solid transparent;
+    transition: all var(--transition-speed);
+    display: flex;
+    flex-direction: column;
+}
+.video-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary-accent-hover);
+    box-shadow: var(--shadow);
+}
+.thumbnail-container {
+    position: relative;
+    display: block;
+    overflow: hidden;
+}
+.thumbnail-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform .4s ease;
+}
+.video-card:hover .thumbnail-container img {
+    transform: scale(1.05);
+}
+.video-info {
+    padding: 1rem;
+}
+.video-info h3 {
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.4;
+}
+.video-grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(var(--grid-mobile-columns, 2), 1fr);
+}
+@media (min-width: 1024px) {
+    .video-grid {
+        grid-template-columns: repeat(var(--grid-desktop-columns, 4), 1fr);
+    }
+}
+.layout-landscape .thumbnail-container {
+    aspect-ratio: 16 / 9;
+}
+.layout-landscape .video-info h3 {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.layout-landscape .portrait-info-overlay {
+    display: none;
+}
+.layout-portrait .thumbnail-container {
+    aspect-ratio: 185 / 264;
+}
+.layout-portrait .video-info {
+    display: none;
+}
+.layout-portrait .thumbnail-container .duration-badge,
+.layout-portrait .thumbnail-container .quality-badge {
+    display: none;
+}
+.portrait-info-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 0; 
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0) 100%);
+    box-sizing: border-box;
+    display: none;
+}
+.layout-portrait .portrait-info-overlay {
+    display: block;
+}
+.portrait-info-overlay .portrait-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem;
+}
+.portrait-info-overlay .portrait-meta > * {
+    display: flex;
+    align-items: center;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1;
+    padding: 5px 8px;
+    border-radius: 4px;
+    margin-left: 0;
+    flex-shrink: 0;
+}
+.portrait-info-overlay .meta-quality {
+    background-color: #ff0000;
+    color: white;
+    text-transform: uppercase;
+}
+.portrait-info-overlay .meta-duration {
+    background: none;
+    color: white;
+    padding-left: 0;
+    padding-right: 0;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.9);
+    text-transform: lowercase;
+}
+.portrait-info-overlay .portrait-title {
+    background-color: #ffc107;
+    color: black;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-shrink: 1;
+    min-width: 0;
+    margin-left: auto; 
+}
+.thumbnail-container .badge {
+    position: absolute;
+    z-index: 5;
+    padding: 5px 10px;
+    font-size: 0.6rem;
+    font-weight: 600;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    background-color: rgba(0, 0, 0, .6);
+    backdrop-filter: blur(4px);
+}
+.thumbnail-container .category-badge {
+    top: 0;
+    left: 0;
+    margin-top: -1px;
+    margin-left: -1px;
+    border-bottom-right-radius: var(--border-radius-md);
+    background-color: var(--primary-accent);
+}
+.thumbnail-container .duration-badge {
+    bottom: 0;
+    left: 0;
+    border-bottom-left-radius: var(--border-radius-md);
+    border-top-right-radius: var(--border-radius-md);
+    text-transform: none;
+    font-size: .8rem;
+    font-weight: 500;
+}
+.thumbnail-container .quality-badge {
+    bottom: 0;
+    right: 0;
+    border-bottom-right-radius: var(--border-radius-md);
+    border-top-left-radius: var(--border-radius-md);
+    background-color: var(--primary-accent);
+}
+
+/* 7. FOOTER & HALAMAN LAIN (ASLI) */
+.site-footer {
+    margin-top: 4rem; 
+    background-color: var(--bg-primary); 
+    padding: 3rem 0; 
+    border-top: 1px solid var(--border-color);
+}
+.footer-container {
+    text-align: center;
+}
+.footer-container p {
+    color: var(--text-secondary);
+    font-size: .9rem; 
+}
+.generic-section {
+    padding-top: 2.5rem;
+}
+.actress-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1.5rem;
+}
+.actress-card {
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+.actress-card:hover {
+    transform: translateY(-5px);
+}
+.actress-image {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    border: 3px solid var(--bg-tertiary);
+    box-shadow: var(--shadow);
+}
+.actress-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.actress-name h3 {
+    font-size: 1rem;
+    font-weight: 600;
+}
+.page-header-profile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+    padding: 2rem;
+    background-color: var(--bg-secondary);
+    border-radius: var(--border-radius-lg);
+}
+.page-header-profile img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid var(--primary-accent);
+}
+.page-header-profile h1 {
+    font-size: 2rem;
+}
+.az-filter {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 3rem;
+    padding: 1rem;
+    background-color: var(--bg-secondary);
+    border-radius: var(--border-radius-md);
+}
+.az-filter a {
+    color: var(--text-secondary);
+    font-weight: 600;
+    text-decoration: none;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    min-width: 40px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+.az-filter a:hover {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+.az-filter a.active {
+    background-color: var(--primary-accent);
+    color: #fff;
+    box-shadow: 0 0 10px var(--glow-color);
+}
+@media (max-width: 1023px) {
+    .site-logo-img { height: 35px; width: auto; }
+    .site-logo { font-size: 1.2rem; gap: 8px; }
+    .site-logo span { font-size: 1.2rem; }
+}
+
+/*
+=====================================================================
+== BAGIAN TAMBAHAN: GAYA BARU HANYA UNTUK VIDEO.PHP (SESUAI GAMBAR) ==
+=====================================================================
+*/
+
+.main-player-area {
+    margin-top: 2.5rem;
+}
+.player-wrapper {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    border-radius: var(--border-radius-lg);
+    background-color: #000;
+    /* box-shadow: 0 0 40px var(--glow-color); --- DIHAPUS SESUAI PERMINTAAN --- */
+}
+.player-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+.video-title-box {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    margin-top: 2rem;
+}
+.video-title-box .title-main {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+    line-height: 1.4;
+}
+
+.detail-wrapper {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    margin-top: 1.5rem;
+    overflow: hidden;
+}
+
+.detail-tabs {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    background-color: rgba(0,0,0,0.1);
+}
+
+.detail-tabs a {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    letter-spacing: 1px;
+    transition: color 0.3s ease;
+    cursor: pointer;
+}
+
+.detail-tabs a:hover {
+    color: #F0C43E; /* Warna Emas */
+}
+
+.detail-tabs a.active {
+    color: var(--text-primary);
+}
+
+/* MODIFICATION: Tab content panels */
+.detail-content-panel {
+    display: none;
+    padding: 1.5rem;
+    animation: fadeIn 0.5s ease;
+}
+.detail-content-panel.active {
+    display: block;
+}
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.detail-content-grid {
+    display: flex;
+    flex-direction: row; 
+    align-items: flex-start; 
+    gap: 1.5rem; 
+}
+
+.detail-poster {
+    flex: 0 0 250px; 
+    width: 250px;
+}
+.detail-poster img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.detail-meta {
+    flex: 1 1 auto;
+}
+
+.detail-meta ul {
+    display: flex;
+    flex-direction: column;
+}
+
+.detail-meta li {
+    display: flex;
+    align-items: flex-start;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+.detail-meta li:first-child {
+    padding-top: 0;
+}
+.detail-meta li:last-child {
+    border-bottom: none;
+}
+
+.detail-meta .icon {
+    margin-right: 1rem;
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-top: 4px;
+}
+
+.detail-meta strong {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-right: 0.5rem;
+    white-space: nowrap;
+}
+
+.detail-meta .value {
+    color: var(--text-secondary);
+}
+
+.detail-meta .value a {
+    color: #E3B62D; /* Warna Emas */
+    font-weight: 500;
+}
+
+.detail-meta .value a:hover {
+    color: #F0C43E; /* Warna Emas lebih terang */
+    text-decoration: underline;
+}
+
+.detail-description {
+    margin-top: 1.5rem;
+}
+.description-inner-wrapper {
+    background-color: var(--bg-tertiary);
+    border-radius: 8px;
+    padding: 1.25rem;
+    position: relative;
+}
+.detail-description p {
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin: 0;
+}
+.description-text-wrapper.is-collapsible {
+    max-height: 100px;
+    overflow: hidden;
+    position: relative;
+    transition: max-height 0.4s ease-out;
+}
+.description-text-wrapper.is-collapsible::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50px;
+    background: linear-gradient(to bottom, transparent, var(--bg-tertiary));
+    pointer-events: none;
+}
+.description-text-wrapper.is-collapsible.is-expanded {
+    max-height: 1000px;
+}
+.description-text-wrapper.is-collapsible.is-expanded::after {
+    display: none;
+}
+.show-more-btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin-top: 0.75rem;
+    padding: 0.6rem;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+.show-more-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+}
+.description-inner-wrapper .icon-quote-start,
+.description-inner-wrapper .icon-quote-end {
+    position: absolute;
+    font-size: 1.5rem;
+    color: var(--border-color);
+    z-index: 10;
+}
+.description-inner-wrapper .icon-quote-start {
+    top: 0.5rem;
+    left: 0.5rem;
+}
+.description-inner-wrapper .icon-quote-end {
+    bottom: 0.5rem;
+    right: 0.5rem;
+}
+
+/* GAYA BARU: Trailer, Gallery, and Download */
+.trailer-player {
+    border-radius: var(--border-radius-md);
+    box-shadow: none;
+}
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
+.gallery-item {
+    display: block;
+    border-radius: var(--border-radius-md);
+    overflow: hidden;
+    aspect-ratio: 16 / 10;
+    background-color: var(--bg-tertiary);
+    transition: transform 0.3s ease;
+    cursor: pointer;
+}
+.gallery-item:hover {
+    transform: scale(1.03);
+}
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.download-links-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 400px;
+    margin: 0 auto;
+}
+.btn-download {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 0.8rem 1.5rem;
+    background: linear-gradient(45deg, #F0C43E, #E3B62D);
+    color: var(--bg-primary);
+    font-weight: 700;
+    font-size: 1rem;
+    border-radius: 8px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+.btn-download:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 15px rgba(227, 182, 45, 0.3);
+    color: var(--bg-primary);
+}
+.btn-download .ph-fill {
+    font-size: 1.2rem;
+}
+
+/* GAYA BARU: LIGHTBOX UNTUK GALERI */
+.lightbox {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    animation: fadeIn 0.3s ease;
+}
+.lightbox.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.lightbox-overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    cursor: pointer;
+}
+.lightbox-content {
+    position: relative;
+    padding: 10px;
+    max-width: 90vw;
+    max-height: 90vh;
+}
+.lightbox-image {
+    display: block;
+    max-width: 100%;
+    max-height: 90vh;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    animation: zoomIn 0.3s ease;
+}
+@keyframes zoomIn {
+    from { transform: scale(0.9); }
+    to { transform: scale(1); }
+}
+.lightbox-close, .lightbox-prev, .lightbox-next {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-size: 2rem;
+    font-weight: bold;
+    transition: background 0.3s ease;
+    z-index: 2001;
+}
+.lightbox-close:hover, .lightbox-prev:hover, .lightbox-next:hover {
+    background: rgba(0, 0, 0, 0.8);
+}
+.lightbox-close {
+    top: 10px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    border-radius: 50%;
+    padding: 0;
+}
+.lightbox-prev, .lightbox-next {
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 10px 15px;
+    border-radius: 8px;
+}
+.lightbox-prev {
+    left: 10px;
+}
+.lightbox-next {
+    right: 10px;
+}
+
+/* ===== PERBAIKAN FINAL: Penyesuaian Menyeluruh untuk Mobile ===== */
+@media (max-width: 768px) {
+    .video-title-box { padding: 1rem; margin-top: 1.5rem; }
+    .video-title-box .title-main { font-size: 0.8rem; }
+    .detail-wrapper { margin-top: 1rem; }
+    .detail-content-panel { padding: 1rem; }
+    .detail-content-grid { display: block; }
+    .detail-poster { display: none; }
+    .detail-tabs { flex-wrap: nowrap; overflow-x: auto; justify-content: flex-start; padding: 0.75rem 1rem; gap: 0.30rem; }
+    .detail-tabs a { font-size: 0.7rem; white-space: nowrap; }
+    .detail-meta li, .detail-meta .value { font-size: 0.75rem; }
+    .detail-meta .icon { font-size: 0.9rem; }
+    .description-inner-wrapper { padding: 1rem; }
+    .detail-description p { font-size: 0.85rem; }
+    .show-more-btn { padding: 0.5rem; font-size: 0.8rem; }
+    .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+    .portrait-info-overlay .portrait-meta > * { font-size: 8.6px; }
+    .related-video-wrapper .portrait-title { font-size: 6.5px; text-align: left; padding-left: 5px; padding-right: 5px; }
+    .lightbox-prev, .lightbox-next { font-size: 1.5rem; padding: 5px 10px; }
+}
+@media (min-width: 768px) {
+    .related-video-wrapper .portrait-title { font-size: 8px; text-align: left; padding-left: 5px; padding-right: 5px; }
+}
+/* ===== PENYESUAIAN UKURAN DESKTOP VIDEO.PHP ===== */
+@media (min-width: 1024px) {
+    .main-player-area,
+    .video-title-box,
+    .detail-wrapper {
+        /* Anda bisa mengubah nilai 1100px ini sesuai selera, misal 1200px atau 90% */
+        max-width: 1100px; 
+        margin-left: auto;
+        margin-right: auto;
+    }
+/* Mengatur TINGGI (aspek rasio) dari player */
+    .player-wrapper {
+        /* - Nilai standar adalah 56.25% (rasio 16:9).
+           - Kurangi nilai ini (misal: 50%) untuk membuat player lebih PENDEK.
+           - Tambah nilai ini (misal: 60%) untuk membuat player lebih TINGGI.
+        */
+        padding-bottom: 35%; /* Contoh: player dibuat lebih pendek/widescreen */
+    }
+}
+/* GAYA TOMBOL SERVER DI BAWAH PLAYER (DIPERBARUI) */
+.server-buttons-wrapper {
+    display: flex;
+    justify-content: center; /* Tombol berada di tengah */
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+    margin-bottom: -0.5rem;
+}
+.server-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1.25rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    background-color: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+/* Selektor diperbaiki untuk menargetkan SVG */
+.server-btn svg {
+    width: 1.1em;
+    height: 1.1em;
+}
+.server-btn:hover {
+    color: var(--text-primary);
+    background-color: var(--bg-secondary);
+    border-color: #555;
+}
+.server-btn.active {
+    background-color: var(--primary-accent);
+    color: #fff;
+    border-color: var(--primary-accent);
+}
+/* --- KODE BARU UNTUK FITUR PENCARIAN MOBILE --- */
+
+/* Wrapper untuk kontrol di header mobile */
+.mobile-header-controls {
+    display: flex;
+    align-items: center; /* Memastikan kedua ikon sejajar secara vertikal */
+    gap: 0.25rem; /* Jarak antar ikon */
+}
+
+/* Tombol untuk membuka popup pencarian */
+.mobile-search-open-btn {
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 1.6rem; /* DISAMAKAN ukurannya dengan ikon menu */
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    transition: color 0.3s;
+}
+.mobile-search-open-btn:hover {
+    color: var(--primary-accent);
+}
+
+.search-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(10, 10, 10, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 9999;
+    display: none; /* Sembunyi secara default */
+    align-items: flex-start; /* Posisikan di atas */
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.search-popup.is-open {
+    display: flex;
+    opacity: 1;
+}
+
+.search-popup-content {
+    width: 90%;
+    max-width: 600px;
+    margin-top: 15vh;
+}
+
+.search-popup-form {
+    position: relative;
+    width: 100%;
+}
+
+.search-popup-input {
+    width: 100%;
+    height: 60px;
+    padding: 0 70px 0 25px;
+    border-radius: 30px;
+    border: 2px solid var(--border-color);
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    font-size: 1.2rem;
+    font-weight: 500;
+    transition: border-color 0.3s ease;
+}
+
+.search-popup-input:focus {
+    outline: none;
+    border-color: var(--primary-accent);
+}
+
+.search-popup-submit-btn {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    bottom: 5px;
+    width: 50px;
+    border-radius: 50%;
+    border: none;
+    background-color: var(--primary-accent);
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+}
+.search-popup-submit-btn:hover {
+    background-color: var(--primary-accent-hover);
+}
+
+.search-popup-close-btn {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 2.5rem;
+    font-weight: 300;
+    cursor: pointer;
+    line-height: 1;
+}
