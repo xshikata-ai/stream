@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StreamVibe - Premium Streaming</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent; /* Menghilangkan highlight biru saat diklik */
+        }
+
+        :root {
+            --primary: #7C3AED;
+            --primary-light: #A78BFA;
+            --secondary: #EC4899;
+            --dark: #0A0A0F;
+            --dark-2: #12121A;
+            --dark-3: #1A1A2E;
+            --card: #16162A;
+            --text: #F8F8FF;
+            --text-muted: #9090A8;
+            --gold: #F59E0B;
+            --gradient: linear-gradient(135deg, #7C3AED, #EC4899);
+            --gradient-2: linear-gradient(135deg, #0A0A0F, #1A1A2E);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--dark);
+            color: var(--text);
+            max-width: 1200px;
+            margin: 0 auto;
+            min-height: 100vh;
+            overflow-x: hidden;
+            width: 100%;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: var(--dark); }
+        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+
+        /* General Image Rules */
+        .movie-poster img,
+        .continue-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 14px 16px;
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(124, 58, 237, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: padding 0.3s ease;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .site-logo {
+            height: 32px;
+            width: auto;
+            object-fit: contain;
+            display: block;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 12px;
+            background: var(--card);
+            border: 1px solid rgba(124, 58, 237, 0.2);
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            outline: none;
+        }
+
+        .icon-btn:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .notif-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 16px;
+            height: 16px;
+            background: var(--secondary);
+            border-radius: 50%;
+            font-size: 0.6rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--dark);
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 12px;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border: 2px solid rgba(124, 58, 237, 0.5);
+            cursor: pointer;
+        }
+
+        /* ===== SEARCH BAR ===== */
+        .search-section {
+            padding: 16px;
+            transition: padding 0.3s ease;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--card);
+            border: 1px solid rgba(124, 58, 237, 0.2);
+            border-radius: 16px;
+            padding: 10px 16px;
+            transition: all 0.3s;
+        }
+
+        .search-bar:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+        }
+
+        .search-bar i {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .search-bar input {
+            flex: 1;
+            background: none;
+            border: none;
+            outline: none;
+            color: var(--text);
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            width: 100%;
+        }
+
+        .search-bar input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-filter {
+            width: 28px;
+            height: 28px;
+            background: var(--gradient);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        /* ===== HERO BANNER ===== */
+        .hero-section {
+            padding: 0 16px 20px;
+            transition: padding 0.3s ease;
+        }
+
+        .hero-card {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            height: 220px;
+            cursor: pointer;
+            transition: height 0.3s ease;
+        }
+
+        .hero-bg {
+            width: 100%;
+            height: 100%;
+            background: var(--dark-3);
+            position: relative;
+        }
+
+        .hero-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            transition: opacity 0.6s ease-in-out;
+        }
+
+        .hero-bg img.active {
+            opacity: 1;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(10,10,15,0.95) 0%, rgba(10,10,15,0.4) 50%, transparent 100%);
+        }
+
+        .hero-badge {
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: var(--gradient);
+            padding: 4px 12px;
+            border-radius: 0 0 12px 0;
+            font-size: 0.65rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            z-index: 2;
+        }
+
+        /* Menyimpan judul dan genre tepat di sudut kiri bawah */
+        .hero-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 16px; /* Padding bawah disesuaikan karena tidak ada tombol */
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+
+        .hero-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+            line-height: 1.2;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .hero-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .hero-meta span {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .hero-dots {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 12px;
+        }
+
+        .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--dark-3);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .dot.active {
+            width: 20px;
+            background: var(--primary);
+        }
+
+        /* ===== GENERAL SECTION SETTINGS ===== */
+        .section {
+            padding: 0 0 20px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            margin-bottom: 12px;
+            transition: padding 0.3s ease;
+        }
+
+        .section-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .section-link {
+            font-size: 0.75rem;
+            color: var(--primary-light);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* ===== ACTRESS STORY (IG STYLE) ===== */
+        .actress-scroll {
+            display: flex;
+            gap: 14px;
+            padding: 4px 16px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            transition: padding 0.3s ease;
+        }
+
+        .actress-scroll::-webkit-scrollbar { display: none; }
+
+        .actress-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+
+        .actress-ring {
+            position: relative;
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+            overflow: hidden; 
+        }
+
+        .actress-ring::before {
+            content: '';
+            position: absolute;
+            width: 150%; 
+            height: 150%;
+            background: conic-gradient(
+                from 0deg,
+                #7C3AED, 
+                #EC4899, 
+                rgba(255, 255, 255, 0.8), 
+                #7C3AED 
+            );
+            animation: spinRing 4.5s linear infinite; 
+        }
+
+        .actress-ring img {
+            position: relative;
+            z-index: 1;
+            width: calc(100% - 6px);
+            height: calc(100% - 6px);
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--dark);
+        }
+
+        @keyframes spinRing {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .actress-name {
+            font-size: 0.65rem;
+            font-weight: 500;
+            color: var(--text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 64px;
+            text-align: center;
+        }
+
+        /* ===== CATEGORY & TAGS TABS ===== */
+        .categories-scroll,
+        .tags-scroll {
+            display: flex;
+            gap: 8px;
+            padding: 0 16px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            transition: padding 0.3s ease;
+        }
+
+        .categories-scroll::-webkit-scrollbar,
+        .tags-scroll::-webkit-scrollbar { display: none; }
+
+        .category-chip,
+        .tag-chip {
+            flex-shrink: 0;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: var(--card);
+            border: 1px solid rgba(124, 58, 237, 0.2);
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        .category-chip.active,
+        .tag-chip.active {
+            background: var(--gradient);
+            border-color: transparent;
+            color: white;
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+        }
+
+        /* ===== MOVIE CARDS ===== */
+        .movies-scroll {
+            display: flex;
+            gap: 12px;
+            padding: 4px 16px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            transition: padding 0.3s ease;
+        }
+
+        .movies-scroll::-webkit-scrollbar { display: none; }
+
+        .movie-card {
+            flex-shrink: 0;
+            width: 135px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .movie-poster {
+            width: 100%;
+            height: auto;
+            aspect-ratio: 2 / 3; 
+            border-radius: 12px;
+            background: var(--card);
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 8px;
+            border: 1px solid rgba(124, 58, 237, 0.15);
+        }
+        
+        .movie-poster .img-landscape { display: none; }
+        .movie-poster .img-portrait { display: block; }
+
+        .movie-poster-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(10,10,15,0.9) 0%, transparent 60%);
+            opacity: 0;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .play-circle {
+            width: 38px;
+            height: 38px;
+            background: rgba(124, 58, 237, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            box-shadow: 0 0 20px rgba(124, 58, 237, 0.6);
+        }
+
+        .movie-badge {
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            background: rgba(0,0,0,0.7);
+            color: var(--gold);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.55rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .movie-info {
+            padding: 0 2px;
+        }
+
+        .movie-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .movie-genre {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+        }
+
+        /* ===== CONTINUE WATCHING ===== */
+        .continue-card {
+            margin: 0 16px 12px;
+            background: var(--card);
+            border-radius: 16px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid rgba(124, 58, 237, 0.2);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .continue-thumb {
+            width: 90px;
+            height: 50px;
+            border-radius: 8px;
+            background: var(--dark-3);
+            flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .continue-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .continue-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .continue-ep {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 3px;
+            background: var(--dark-3);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient);
+            border-radius: 10px;
+            transition: width 0.3s;
+        }
+
+        .continue-play {
+            width: 32px;
+            height: 32px;
+            background: var(--gradient);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 0.75rem;
+        }
+
+        /* ===== BOTTOM NAV ===== */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 1200px;
+            background: rgba(10, 10, 15, 0.98);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(124, 58, 237, 0.15);
+            padding: 6px 10px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            flex: 1;
+            padding: 4px 0;
+            border-radius: 12px;
+            transition: all 0.3s;
+            position: relative;
+            min-width: 0;
+            outline: none;
+        }
+
+        .nav-item i {
+            font-size: 1.1rem; 
+            color: var(--text-muted);
+            transition: all 0.3s;
+        }
+
+        .nav-item span {
+            font-size: 0.6rem; 
+            color: var(--text-muted);
+            font-weight: 500;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .nav-item.active i,
+        .nav-item.active span {
+            color: var(--primary-light);
+        }
+
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px; 
+            height: 2px;
+            background: var(--gradient);
+            border-radius: 0 0 4px 4px;
+        }
+
+        /* ===== ANIMATED TELEGRAM BUTTON ===== */
+        .nav-center {
+            width: 44px; 
+            height: 44px; 
+            background: #0088cc; /* Telegram Blue Background */
+            border-radius: 14px; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0, 136, 204, 0.4); /* Blue Shadow */
+            transition: all 0.3s;
+            margin-bottom: 8px;
+            flex-shrink: 0;
+            animation: telegram-float 3s infinite ease-in-out;
+            outline: none;
+        }
+
+        .nav-center i {
+            animation: icon-pulse 2s infinite ease-in-out;
+            margin-right: 2px; 
+        }
+
+        @keyframes telegram-float {
+            0%, 100% { transform: translateY(0); box-shadow: 0 8px 20px rgba(0, 136, 204, 0.4); }
+            50% { transform: translateY(-4px); box-shadow: 0 12px 25px rgba(0, 136, 204, 0.7); }
+        }
+
+        @keyframes icon-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            padding-bottom: 76px;
+        }
+
+        /* ===== DESKTOP MEDIA QUERIES ===== */
+        @media (min-width: 768px) {
+            .header { padding: 20px 40px; }
+            
+            .search-section { padding: 20px 40px; }
+            .hero-section { padding: 0 40px 30px; }
+            .hero-card { height: 400px; }
+            
+            .hero-badge { top: 20px; left: 40px; border-radius: 20px; font-size: 0.75rem; }
+            .hero-content { position: absolute; padding: 40px; bottom: 0; left: 0; }
+            .hero-title { font-size: 2.2rem; margin-bottom: 8px; }
+            
+            .section-header { padding: 0 40px; }
+            
+            .actress-scroll,
+            .categories-scroll, 
+            .tags-scroll,
+            .movies-scroll { padding: 4px 40px; }
+            
+            .continue-card { max-width: 350px; display: inline-flex; margin: 0 14px 14px 40px; }
+
+            .bottom-nav { 
+                display: none; 
+            }
+            
+            .main-content {
+                padding-bottom: 30px; 
+            }
+
+            .movie-card { width: 200px; }
+            .movie-poster { height: 120px; aspect-ratio: auto; }
+            .movie-poster .img-landscape { display: block; }
+            .movie-poster .img-portrait { display: none; }
+        }
+
+        /* Animation */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.5s ease forwards;
+        }
+
+        .delay-1 { animation-delay: 0.1s; opacity: 0; }
+        .delay-2 { animation-delay: 0.2s; opacity: 0; }
+        .delay-3 { animation-delay: 0.3s; opacity: 0; }
+        .delay-4 { animation-delay: 0.4s; opacity: 0; }
+    </style>
+</head>
+<body>
+
+<div class="header fade-in">
+    <div class="logo">
+        <img src="https://javpornsub.net/assets/uploads/69871761766b2-68658059121ad-logo-1748094252.png" alt="StreamVibe Logo" class="site-logo">
+    </div>
+    
+    <div class="header-actions">
+        <div class="icon-btn">
+            <i class="fas fa-home"></i>
+        </div>
+        <div class="icon-btn">
+            <i class="fas fa-bell"></i>
+            <span class="notif-badge">3</span>
+        </div>
+        <div class="avatar">JD</div>
+    </div>
+</div>
+
+<div class="main-content">
+
+    <div class="search-section fade-in delay-1">
+        <div class="search-bar">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Search movies, series, documentaries...">
+            <div class="search-filter">
+                <i class="fas fa-sliders-h" style="color:white;font-size:0.7rem"></i>
+            </div>
+        </div>
+    </div>
+
+    <div class="hero-section fade-in delay-2">
+        <div class="hero-card">
+            <div class="hero-bg">
+                <img src="https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=1200&q=80" alt="Slide 1" class="active">
+                <img src="https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?auto=format&fit=crop&w=1200&q=80" alt="Slide 2">
+                <img src="https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=1200&q=80" alt="Slide 3">
+                <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1200&q=80" alt="Slide 4">
+            </div>
+            <div class="hero-overlay"></div>
+            <div class="hero-badge">Popular</div>
+            
+            <div class="hero-content">
+                <div class="hero-title" id="hero-title">Cosmic Odyssey</div>
+                <div class="hero-meta">
+                    <span><i class="fas fa-film"></i> <span id="hero-genre">english subtitle</span></span>
+                </div>
+            </div>
+        </div>
+        <div class="hero-dots">
+            <div class="dot active"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+    </div>
+
+    <div class="section fade-in delay-2">
+        <div class="section-header">
+            <span class="section-title">🌟 Popular Actresses</span>
+            <span class="section-link">View All <i class="fas fa-chevron-right"></i></span>
+        </div>
+        <div class="actress-scroll">
+            <div class="actress-item">
+                <div class="actress-ring">
+                    <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80" alt="Actress 1">
+                </div>
+                <span class="actress-name">Emma S.</span>
+            </div>
+            <div class="actress-item">
+                <div class="actress-ring">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80" alt="Actress 2">
+                </div>
+                <span class="actress-name">Anya T.</span>
+            </div>
+            <div class="actress-item">
+                <div class="actress-ring">
+                    <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=150&q=80" alt="Actress 3">
+                </div>
+                <span class="actress-name">Chris E.</span>
+            </div>
+            <div class="actress-item">
+                <div class="actress-ring">
+                    <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=150&q=80" alt="Actress 4">
+                </div>
+                <span class="actress-name">Zendaya</span>
+            </div>
+            <div class="actress-item">
+                <div class="actress-ring">
+                    <img src="https://images.unsplash.com/photo-1554151228-14d9def656e4?auto=format&fit=crop&w=150&q=80" alt="Actress 5">
+                </div>
+                <span class="actress-name">Margot R.</span>
+            </div>
+            <div class="actress-item">
+                <div class="actress-ring">
+                    <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=150&q=80" alt="Actress 6">
+                </div>
+                <span class="actress-name">Florence</span>
+            </div>
+            <div class="actress-item">
+                <div class="actress-ring">
+                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80" alt="Actress 7">
+                </div>
+                <span class="actress-name">Scarlett</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="section fade-in delay-2">
+        <div class="section-header">
+            <span class="section-title">🎭 Categories</span>
+        </div>
+        <div class="categories-scroll">
+            <div class="category-chip active">english subtitle</div>
+            <div class="category-chip">uncensored</div>
+            <div class="category-chip">reducing mosaic</div>
+            <div class="category-chip">series</div>
+        </div>
+    </div>
+
+    <div class="section fade-in delay-3">
+        <div class="section-header">
+            <span class="section-title">▶️ Continue Watching</span>
+            <span class="section-link">View All <i class="fas fa-chevron-right"></i></span>
+        </div>
+
+        <div class="continue-card">
+            <div class="continue-thumb">
+                <img src="https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?auto=format&fit=crop&w=300&q=80" alt="House of Dragon">
+            </div>
+            <div class="continue-info">
+                <div class="continue-title">House of Dragon</div>
+                <div class="continue-ep">S2 E5 • 24 mins left</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 65%"></div>
+                </div>
+            </div>
+            <div class="continue-play"><i class="fas fa-play"></i></div>
+        </div>
+    </div>
+
+    <div class="section fade-in delay-3">
+        <div class="section-header">
+            <span class="section-title">🔥 Trending</span>
+            <span class="section-link">View All <i class="fas fa-chevron-right"></i></span>
+        </div>
+        <div class="movies-scroll">
+
+            <div class="movie-card">
+                <div class="movie-poster">
+                    <img src="https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=400&q=80" class="img-landscape" alt="Nebula Rising">
+                    <img src="https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=300&h=450&q=80" class="img-portrait" alt="Nebula Rising">
+                    <div class="movie-poster-overlay">
+                        <div class="play-circle"><i class="fas fa-play"></i></div>
+                    </div>
+                    <div class="movie-badge">SUB</div>
+                </div>
+                <div class="movie-info">
+                    <div class="movie-title">Nebula Rising</div>
+                    <div class="movie-genre">english subtitle</div>
+                </div>
+            </div>
+
+            <div class="movie-card">
+                <div class="movie-poster">
+                    <img src="https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=400&q=80" class="img-landscape" alt="Dark Survival">
+                    <img src="https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=300&h=450&q=80" class="img-portrait" alt="Dark Survival">
+                    <div class="movie-poster-overlay">
+                        <div class="play-circle"><i class="fas fa-play"></i></div>
+                    </div>
+                    <div class="movie-badge">SUB</div>
+                </div>
+                <div class="movie-info">
+                    <div class="movie-title">Dark Survival</div>
+                    <div class="movie-genre">uncensored</div>
+                </div>
+            </div>
+
+            <div class="movie-card">
+                <div class="movie-poster">
+                    <img src="https://images.unsplash.com/photo-1608889825103-eb5ed706fc64?auto=format&fit=crop&w=400&q=80" class="img-landscape" alt="Iron Guardian">
+                    <img src="https://images.unsplash.com/photo-1608889825103-eb5ed706fc64?auto=format&fit=crop&w=300&h=450&q=80" class="img-portrait" alt="Iron Guardian">
+                    <div class="movie-poster-overlay">
+                        <div class="play-circle"><i class="fas fa-play"></i></div>
+                    </div>
+                    <div class="movie-badge">SUB</div>
+                </div>
+                <div class="movie-info">
+                    <div class="movie-title">Iron Guardian</div>
+                    <div class="movie-genre">reducing mosaic</div>
+                </div>
+            </div>
+
+            <div class="movie-card">
+                <div class="movie-poster">
+                    <img src="https://images.unsplash.com/photo-1559583985-c80d8ad9b29f?auto=format&fit=crop&w=400&q=80" class="img-landscape" alt="Shadow Files">
+                    <img src="https://images.unsplash.com/photo-1559583985-c80d8ad9b29f?auto=format&fit=crop&w=300&h=450&q=80" class="img-portrait" alt="Shadow Files">
+                    <div class="movie-poster-overlay">
+                        <div class="play-circle"><i class="fas fa-play"></i></div>
+                    </div>
+                    <div class="movie-badge">SUB</div>
+                </div>
+                <div class="movie-info">
+                    <div class="movie-title">Shadow Files</div>
+                    <div class="movie-genre">uncensored</div>
+                </div>
+            </div>
+
+            <div class="movie-card">
+                <div class="movie-poster">
+                    <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=400&q=80" class="img-landscape" alt="Magic Realm">
+                    <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=300&h=450&q=80" class="img-portrait" alt="Magic Realm">
+                    <div class="movie-poster-overlay">
+                        <div class="play-circle"><i class="fas fa-play"></i></div>
+                    </div>
+                    <div class="movie-badge">SUB</div>
+                </div>
+                <div class="movie-info">
+                    <div class="movie-title">Magic Realm</div>
+                    <div class="movie-genre">english subtitle</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="section fade-in delay-4">
+        <div class="section-header">
+            <span class="section-title">🏷️ Popular Tags</span>
+        </div>
+        <div class="tags-scroll">
+            <div class="tag-chip active">#Big Tits</div>
+            <div class="tag-chip">#Hot Spring</div>
+            <div class="tag-chip">#Married Woman</div>
+            <div class="tag-chip">#Mature Woman</div>
+            <div class="tag-chip">#Slut</div>
+            <div class="tag-chip">#Masturbation</div>
+            <div class="tag-chip">#Cheating</div>
+            <div class="tag-chip">#Bussines Woman</div>
+            <div class="tag-chip">#Teacher</div>
+            <div class="tag-chip">#Massages</div>
+        </div>
+    </div>
+
+    <div class="section fade-in delay-4">
+        <div class="section-header">
+            <span class="section-title">🆕 New Releases</span>
+            <span class="section-link">View All <i class="fas fa-chevron-right"></i></span>
+        </div>
+        <div class="movies-scroll">
+
+            <div class="movie-card">
+                <div class="movie-poster">
+                    <img src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=400&q=80" class="img-landscape" alt="AI Awakening">
+                    <img src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=300&h=450&q=80" class="img-portrait" alt="AI Awakening">
+                    <div class="movie-poster-overlay">
+                        <div class="play-circle"><i class="fas fa-play"></i></div>
+                    </div>
+                    <div class="movie-badge">SUB</div>
+                </div>
+                <div class="movie-info">
+                    <div class="movie-title">AI Awakening</div>
+                    <div class="movie-genre">uncensored</div>
+                </div>
+            </div>
+
+            <div class="movie-card">
+                <div class="movie-poster">
+                    <img src="https://images.unsplash.com/photo-1509316785289-025f5b846b35?auto=format&fit=crop&w=400&q=80" class="img-landscape" alt="Desert Storm">
+                    <img src="https://images.unsplash.com/photo-1509316785289-025f5b846b35?auto=format&fit=crop&w=300&h=450&q=80" class="img-portrait" alt="Desert Storm">
+                    <div class="movie-poster-overlay">
+                        <div class="play-circle"><i class="fas fa-play"></i></div>
+                    </div>
+                    <div class="movie-badge">SUB</div>
+                </div>
+                <div class="movie-info">
+                    <div class="movie-title">Desert Storm</div>
+                    <div class="movie-genre">reducing mosaic</div>
+                </div>
+            </div>
+
+            <div class="movie-card">
+                <div class="movie-poster">
+                    <img src="https://images.unsplash.com/photo-1618336753974-aae8e04506aa?auto=format&fit=crop&w=400&q=80" class="img-landscape" alt="Mind Warp">
+                    <img src="https://images.unsplash.com/photo-1618336753974-aae8e04506aa?auto=format&fit=crop&w=300&h=450&q=80" class="img-portrait" alt="Mind Warp">
+                    <div class="movie-poster-overlay">
+                        <div class="play-circle"><i class="fas fa-play"></i></div>
+                    </div>
+                    <div class="movie-badge">SUB</div>
+                </div>
+                <div class="movie-info">
+                    <div class="movie-title">Mind Warp</div>
+                    <div class="movie-genre">english subtitle</div>
+                </div>
+            </div>
+
+            <div class="movie-card">
+                <div class="movie-poster">
+                    <img src="https://images.unsplash.com/photo-1500829243541-74b67eeccc18?auto=format&fit=crop&w=400&q=80" class="img-landscape" alt="Wild Earth">
+                    <img src="https://images.unsplash.com/photo-1500829243541-74b67eeccc18?auto=format&fit=crop&w=300&h=450&q=80" class="img-portrait" alt="Wild Earth">
+                    <div class="movie-poster-overlay">
+                        <div class="play-circle"><i class="fas fa-play"></i></div>
+                    </div>
+                    <div class="movie-badge">SUB</div>
+                </div>
+                <div class="movie-info">
+                    <div class="movie-title">Wild Earth</div>
+                    <div class="movie-genre">english subtitle</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div><div class="bottom-nav">
+    <div class="nav-item active" onclick="setNav(this)">
+        <i class="fas fa-home"></i>
+        <span>Home</span>
+    </div>
+    <div class="nav-item" onclick="setNav(this)">
+        <i class="fas fa-compass"></i>
+        <span>Explore</span>
+    </div>
+    
+    <div class="nav-center">
+        <i class="fab fa-telegram-plane" style="color:white"></i>
+    </div>
+    
+    <div class="nav-item" onclick="setNav(this)">
+        <i class="fas fa-bookmark"></i>
+        <span>Saved</span>
+    </div>
+    <div class="nav-item" onclick="setNav(this)">
+        <i class="fas fa-user"></i>
+        <span>Profile</span>
+    </div>
+</div>
+
+<script>
+    // ===== BOTTOM NAV =====
+    function setNav(el) {
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        el.classList.add('active');
+    }
+
+    // ===== HERO SLIDER (IMAGES & DOTS) =====
+    const dots = document.querySelectorAll('.dot');
+    const heroImages = document.querySelectorAll('.hero-bg img');
+    
+    const slideData = [
+        { title: "Cosmic Odyssey", genre: "english subtitle" },
+        { title: "House of Dragon", genre: "uncensored" },
+        { title: "Nebula Rising", genre: "reducing mosaic" },
+        { title: "Magic Realm", genre: "english subtitle" }
+    ];
+    
+    const heroTitle = document.getElementById('hero-title');
+    const heroGenre = document.getElementById('hero-genre');
+
+    let currentDot = 0;
+
+    function updateSlide(index) {
+        dots[currentDot].classList.remove('active');
+        heroImages[currentDot].classList.remove('active');
+        
+        currentDot = index;
+        
+        dots[currentDot].classList.add('active');
+        heroImages[currentDot].classList.add('active');
+        
+        if(heroTitle) heroTitle.innerText = slideData[currentDot].title;
+        if(heroGenre) heroGenre.innerText = slideData[currentDot].genre;
+    }
+
+    setInterval(() => {
+        let nextIndex = (currentDot + 1) % dots.length;
+        updateSlide(nextIndex);
+    }, 4000);
+
+    dots.forEach((dot, i) => {
+        dot.addEventListener('click', () => {
+            updateSlide(i);
+        });
+    });
+
+    // ===== CATEGORY CHIPS =====
+    document.querySelectorAll('.category-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+            document.querySelectorAll('.category-chip').forEach(c => c.classList.remove('active'));
+            chip.classList.add('active');
+        });
+    });
+
+    // ===== TAG CHIPS =====
+    document.querySelectorAll('.tag-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+            document.querySelectorAll('.tag-chip').forEach(c => c.classList.remove('active'));
+            chip.classList.add('active');
+        });
+    });
+
+    // ===== SEARCH INTERACTION =====
+    const searchInput = document.querySelector('.search-bar input');
+    searchInput.addEventListener('focus', () => {
+        document.querySelector('.search-bar').style.borderColor = 'var(--primary)';
+    });
+    searchInput.addEventListener('blur', () => {
+        document.querySelector('.search-bar').style.borderColor = 'rgba(124, 58, 237, 0.2)';
+    });
+
+    // ===== RIPPLE EFFECT =====
+    document.querySelectorAll('.movie-card, .continue-card, .actress-item').forEach(card => {
+        card.addEventListener('click', function(e) {
+            if(this.classList.contains('actress-item')) return;
+            
+            const ripple = document.createElement('span');
+            const rect = this.getBoundingClientRect();
+            ripple.style.cssText = `
+                position:absolute;
+                width:10px; height:10px;
+                background:rgba(124,58,237,0.4);
+                border-radius:50%;
+                transform:scale(0);
+                animation:ripple 0.6s linear;
+                left:${e.clientX - rect.left}px;
+                top:${e.clientY - rect.top}px;
+                pointer-events:none;
+                z-index:999;
+            `;
+            this.style.position = 'relative';
+            this.style.overflow = 'hidden';
+            this.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 600);
+        });
+    });
+
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes ripple {
+            to { transform: scale(40); opacity: 0; }
+        }
+    `;
+    document.head.appendChild(style);
+
+    // ===== SCROLL REVEAL =====
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.section').forEach(section => {
+        section.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        observer.observe(section);
+    });
+</script>
+
+</body>
+</html>
