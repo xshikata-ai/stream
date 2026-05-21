@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StreamVibe - Video Player</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* CSS Resets & Variables */
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        :root {
+            --primary: #7C3AED;
+            --primary-light: #A78BFA;
+            --secondary: #EC4899;
+            --dark: #0A0A0F;
+            --dark-2: #12121A;
+            --dark-3: #1A1A2E;
+            --card: #16162A;
+            --text: #F8F8FF;
+            --text-muted: #9090A8;
+            --gold: #F59E0B;
+            --gradient: linear-gradient(135deg, #7C3AED, #EC4899);
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--dark);
+            color: var(--text);
+            max-width: 1200px;
+            margin: 0 auto;
+            min-height: 100vh;
+            overflow-x: hidden;
+            width: 100%;
+        }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: var(--dark); }
+        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+
+        /* PERUBAHAN: Header persis halaman depan */
+        .header {
+            position: sticky; top: 0; z-index: 100; padding: 14px 16px;
+            background: rgba(10, 10, 15, 0.95); backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(124, 58, 237, 0.15);
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .logo { display: flex; align-items: center; }
+        .site-logo { height: 32px; width: auto; object-fit: contain; display: block; }
+        .header-actions { display: flex; align-items: center; gap: 10px; }
+        
+        .icon-btn {
+            width: 36px; height: 36px; border-radius: 12px; background: var(--card);
+            border: 1px solid rgba(124, 58, 237, 0.2); color: var(--text);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.3s; position: relative; outline: none;
+        }
+        .icon-btn:hover { background: var(--primary); border-color: var(--primary); }
+        .notif-badge {
+            position: absolute; top: -4px; right: -4px; width: 16px; height: 16px;
+            background: var(--secondary); border-radius: 50%; font-size: 0.6rem;
+            display: flex; align-items: center; justify-content: center; border: 2px solid var(--dark);
+        }
+        .avatar {
+            width: 36px; height: 36px; border-radius: 12px; background: var(--gradient);
+            display: flex; align-items: center; justify-content: center; font-size: 0.85rem;
+            font-weight: 600; border: 2px solid rgba(124, 58, 237, 0.5); cursor: pointer;
+        }
+
+        /* Video Player Wrapper */
+        .video-player-wrapper { position: relative; width: 100%; background: #000; aspect-ratio: 16 / 9; overflow: hidden; }
+        .video-thumbnail { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .video-player-overlay {
+            position: absolute; inset: 0; background: rgba(0, 0, 0, 0.45);
+            display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background 0.3s;
+        }
+        .video-player-overlay:hover { background: rgba(0,0,0,0.55); }
+        .video-player-overlay.playing { background: transparent; }
+        .video-player-overlay.playing:hover { background: rgba(0,0,0,0.15); }
+        .big-play-btn {
+            width: 70px; height: 70px; background: rgba(124, 58, 237, 0.9); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-size: 1.8rem;
+            box-shadow: 0 0 40px rgba(124, 58, 237, 0.7); transition: all 0.3s; animation: pulse-play 2s infinite ease-in-out;
+        }
+        .big-play-btn:hover { transform: scale(1.1); box-shadow: 0 0 60px rgba(124, 58, 237, 0.9); }
+        .big-play-btn.hidden { display: none; }
+        @keyframes pulse-play {
+            0%, 100% { box-shadow: 0 0 40px rgba(124, 58, 237, 0.7); }
+            50% { box-shadow: 0 0 60px rgba(124, 58, 237, 1), 0 0 80px rgba(236, 72, 153, 0.5); }
+        }
+
+        /* Controls */
+        .video-controls {
+            position: absolute; bottom: 0; left: 0; right: 0; padding: 20px 14px 10px;
+            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
+            opacity: 0; transition: opacity 0.3s; pointer-events: none;
+        }
+        .video-controls.visible { opacity: 1; pointer-events: all; }
+        .video-progress-bar { width: 100%; height: 4px; background: rgba(255,255,255,0.2); border-radius: 10px; cursor: pointer; margin-bottom: 8px; position: relative; overflow: hidden; }
+        .video-progress-fill { height: 100%; background: var(--gradient); border-radius: 10px; width: 0%; transition: width 0.1s linear; }
+        .video-controls-row { display: flex; align-items: center; justify-content: space-between; }
+        .ctrl-left, .ctrl-right { display: flex; align-items: center; gap: 14px; }
+        .ctrl-btn { background: none; border: none; color: white; font-size: 0.95rem; cursor: pointer; padding: 4px; transition: all 0.2s; outline: none; }
+        .ctrl-btn:hover { color: var(--primary-light); transform: scale(1.1); }
+        .ctrl-time { font-size: 0.65rem; color: rgba(255,255,255,0.8); font-weight: 500; white-space: nowrap; }
+        .volume-wrap { display: flex; align-items: center; gap: 6px; }
+        .volume-slider { width: 0; overflow: hidden; transition: width 0.3s ease; }
+        .volume-wrap:hover .volume-slider { width: 60px; }
+        .volume-slider input[type="range"] { -webkit-appearance: none; width: 60px; height: 3px; background: rgba(255,255,255,0.3); border-radius: 10px; outline: none; cursor: pointer; }
+        .volume-slider input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 10px; height: 10px; background: var(--primary-light); border-radius: 50%; }
+        .quality-badge { background: rgba(124, 58, 237, 0.8); padding: 2px 8px; border-radius: 6px; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.5px; cursor: pointer; transition: all 0.2s; }
+        .quality-badge:hover { background: var(--primary); }
+
+        .video-main { padding: 16px; padding-bottom: 8px; } 
+        .video-sidebar { padding: 0 16px 80px 16px; } 
+
+        .video-title-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
+        .video-title-block { flex: 1; min-width: 0; }
+        .video-title { font-size: 1.1rem; font-weight: 700; line-height: 1.3; margin-bottom: 6px; }
+        .video-code { font-size: 0.7rem; color: var(--primary-light); font-weight: 500; letter-spacing: 0.5px; background: rgba(124, 58, 237, 0.15); padding: 2px 8px; border-radius: 6px; display: inline-block; }
+        .video-bookmark-btn { width: 38px; height: 38px; border-radius: 12px; background: var(--card); border: 1px solid rgba(124, 58, 237, 0.2); color: var(--text-muted); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; flex-shrink: 0; }
+        .video-bookmark-btn.saved { background: rgba(124, 58, 237, 0.2); border-color: var(--primary); color: var(--primary-light); }
+
+        /* Stats Row */
+        .video-stats { 
+            display: flex; 
+            flex-wrap: wrap; 
+            align-items: center; 
+            gap: 8px; 
+            padding: 4px 0 16px 0; 
+            margin-bottom: 0; 
+            border: none;
+        }
+        .video-stats span { font-size: 0.75rem; font-weight: 500; color: var(--text-muted); white-space: nowrap; }
+        .stat-divider { width: 4px; height: 4px; background: var(--text-muted); border-radius: 50%; opacity: 0.5; }
+
+        /* Action Buttons */
+        .video-actions { display: flex; align-items: center; gap: 6px; margin-bottom: 16px; }
+        .action-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 7px 6px; border-radius: 10px; background: var(--card); border: 1px solid rgba(124, 58, 237, 0.2); color: var(--text-muted); font-size: 0.65rem; font-weight: 500; cursor: pointer; transition: all 0.3s; font-family: 'Poppins', sans-serif; outline: none; }
+        .action-btn i { font-size: 0.8rem; }
+        .action-btn:hover { border-color: var(--primary); color: var(--primary-light); background: rgba(124, 58, 237, 0.1); }
+        .action-btn.active { background: rgba(124, 58, 237, 0.15); border-color: var(--primary); color: var(--primary-light); }
+        .action-btn.like-active { background: rgba(236, 72, 153, 0.15); border-color: var(--secondary); color: var(--secondary); }
+
+        /* Server Tabs */
+        .server-section { margin-bottom: 16px; }
+        .server-label { font-size: 0.78rem; font-weight: 600; margin-bottom: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+        .server-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+        .server-tab { padding: 7px 16px; border-radius: 10px; background: var(--card); border: 1px solid rgba(124, 58, 237, 0.2); font-size: 0.72rem; font-weight: 600; color: var(--text-muted); cursor: pointer; transition: all 0.3s; display: flex; align-items: center; gap: 6px; }
+        .server-tab i { font-size: 0.7rem; }
+        .server-tab:hover { border-color: var(--primary); color: var(--text); }
+        .server-tab.active { background: var(--gradient); border-color: transparent; color: white; box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4); }
+
+        /* Tags */
+        .video-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+        .video-tag { padding: 5px 12px; border-radius: 20px; background: var(--card); border: 1px solid rgba(124, 58, 237, 0.15); font-size: 0.65rem; color: var(--text-muted); cursor: pointer; transition: all 0.3s; }
+        .video-tag:hover { border-color: var(--primary-light); color: var(--primary-light); }
+
+        /* Actress Card */
+        .actress-card { background: var(--card); border-radius: 16px; padding: 14px; border: 1px solid rgba(124, 58, 237, 0.15); margin-bottom: 16px; display: flex; align-items: center; gap: 14px; cursor: pointer; transition: all 0.3s; }
+        .actress-card:hover { border-color: var(--primary); box-shadow: 0 4px 20px rgba(124, 58, 237, 0.2); }
+        .actress-card-avatar { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; border: 2px solid var(--primary); flex-shrink: 0; }
+        .actress-card-info { flex: 1; min-width: 0; }
+        .actress-card-name { font-size: 0.9rem; font-weight: 600; margin-bottom: 2px; }
+        .actress-card-stats { display: flex; gap: 12px; margin-top: 5px; }
+        .actress-card-stats span { font-size: 0.65rem; color: var(--primary-light); display: flex; align-items: center; gap: 4px; }
+        .actress-follow-btn { padding: 7px 16px; border-radius: 10px; background: var(--gradient); border: none; color: white; font-size: 0.72rem; font-weight: 600; cursor: pointer; transition: all 0.3s; font-family: 'Poppins', sans-serif; flex-shrink: 0; outline: none; }
+        .actress-follow-btn:hover { opacity: 0.85; transform: scale(1.03); }
+        .actress-follow-btn.following { background: var(--card); border: 1px solid var(--primary); color: var(--primary-light); }
+
+        /* Description */
+        .video-desc-block { background: var(--card); border-radius: 14px; padding: 14px; border: 1px solid rgba(124, 58, 237, 0.1); margin-bottom: 16px; }
+        .desc-title { font-size: 0.8rem; font-weight: 600; margin-bottom: 8px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+        .desc-text { font-size: 0.78rem; line-height: 1.7; color: var(--text-muted); overflow: hidden; transition: max-height 0.4s ease; max-height: 68px; }
+        .desc-text.expanded { max-height: 500px; }
+        .desc-toggle { font-size: 0.72rem; color: var(--primary-light); cursor: pointer; margin-top: 6px; display: inline-flex; align-items: center; gap: 4px; transition: color 0.2s; }
+        .desc-toggle:hover { color: var(--primary); }
+
+        /* Series Section */
+        .episode-section { margin-bottom: 16px; }
+        .episode-header { display: flex; align-items: center; margin-bottom: 0; }
+        .episode-title { font-size: 0.9rem; font-weight: 600; color: var(--text); }
+
+        /* Related Videos Card Portrait Mobile */
+        .related-section { margin-bottom: 8px; }
+        .related-title { font-size: 0.9rem; font-weight: 600; margin-bottom: 12px; }
+        
+        .related-list { 
+            display: flex; gap: 12px; overflow-x: auto; scrollbar-width: none; 
+            padding-bottom: 8px; margin: 0 -16px; padding-left: 16px; padding-right: 16px; 
+        }
+        .related-list::-webkit-scrollbar { display: none; }
+
+        .related-card { 
+            display: block; width: 135px; flex-shrink: 0; cursor: pointer; 
+            transition: all 0.3s; background: transparent; border: none; padding: 0; 
+        }
+        .related-card:hover { transform: translateY(-4px); }
+        
+        .related-thumb { 
+            width: 100%; aspect-ratio: 2 / 3; border-radius: 12px; background: var(--card); 
+            position: relative; overflow: hidden; margin-bottom: 8px; border: 1px solid rgba(124, 58, 237, 0.15); 
+        }
+        .related-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.3s; }
+        .related-card:hover .related-thumb img { transform: scale(1.05); }
+        
+        .related-thumb-badge { 
+            position: absolute; top: 6px; left: 6px; background: rgba(0,0,0,0.7); 
+            color: var(--gold); padding: 2px 6px; border-radius: 4px; font-size: 0.55rem; 
+            font-weight: 700; letter-spacing: 0.5px; 
+        }
+        .related-play-overlay { 
+            position: absolute; inset: 0; background: linear-gradient(to top, rgba(10,10,15,0.9) 0%, transparent 60%); 
+            opacity: 0; transition: all 0.3s; display: flex; align-items: center; justify-content: center; 
+        }
+        .related-card:hover .related-play-overlay { opacity: 1; }
+        .related-play-overlay i { 
+            font-size: 1.2rem; color: white; background: rgba(124, 58, 237, 0.9); 
+            width: 38px; height: 38px; border-radius: 50%; display: flex; 
+            align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(124, 58, 237, 0.6); 
+        }
+        
+        .related-info { padding: 0 2px; display: block; }
+        .related-video-title { 
+            font-size: 0.8rem; font-weight: 600; margin-bottom: 2px; 
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; 
+        }
+        .related-meta { font-size: 0.65rem; color: var(--text-muted); display: block; }
+
+        /* Comment Section */
+        .comment-section { margin-bottom: 16px; }
+        .comment-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+        .comment-title { font-size: 0.88rem; font-weight: 600; }
+        .comment-count { font-size: 0.68rem; color: var(--text-muted); background: var(--card); padding: 3px 10px; border-radius: 20px; border: 1px solid rgba(124,58,237,0.2); }
+        .comment-input-wrap { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 16px; }
+        .comment-avatar { width: 34px; height: 34px; border-radius: 10px; background: var(--gradient); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 600; flex-shrink: 0; }
+        .comment-input-box { flex: 1; background: var(--card); border: 1px solid rgba(124,58,237,0.2); border-radius: 12px; padding: 10px 14px; display: flex; align-items: center; gap: 10px; transition: all 0.3s; }
+        .comment-input-box:focus-within { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(124,58,237,0.12); }
+        .comment-input-box input { flex: 1; background: none; border: none; outline: none; color: var(--text); font-family: 'Poppins', sans-serif; font-size: 0.78rem; }
+        .comment-input-box input::placeholder { color: var(--text-muted); }
+        .comment-send-btn { width: 28px; height: 28px; background: var(--gradient); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; cursor: pointer; flex-shrink: 0; transition: all 0.2s; }
+        .comment-send-btn:hover { opacity: 0.85; transform: scale(1.05); }
+        .comment-item { display: flex; gap: 10px; margin-bottom: 14px; }
+        .comment-item-avatar { width: 32px; height: 32px; border-radius: 10px; flex-shrink: 0; overflow: hidden; background: var(--card); }
+        .comment-item-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .comment-body { flex: 1; min-width: 0; }
+        .comment-name-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+        .comment-name { font-size: 0.75rem; font-weight: 600; }
+        .comment-time { font-size: 0.6rem; color: var(--text-muted); }
+        .comment-text { font-size: 0.75rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 6px; }
+        .comment-actions { display: flex; gap: 12px; align-items: center; }
+        .comment-like { display: flex; align-items: center; gap: 4px; font-size: 0.65rem; color: var(--text-muted); cursor: pointer; transition: color 0.2s; }
+        .comment-like:hover, .comment-like.liked { color: var(--secondary); }
+        .comment-reply { font-size: 0.65rem; color: var(--primary-light); cursor: pointer; transition: color 0.2s; }
+        .comment-reply:hover { color: var(--primary); }
+
+        /* Bottom Nav */
+        .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 1200px; background: rgba(10, 10, 15, 0.98); backdrop-filter: blur(20px); border-top: 1px solid rgba(124, 58, 237, 0.15); padding: 6px 10px 12px; display: flex; align-items: center; justify-content: space-between; z-index: 100; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; flex: 1; padding: 4px 0; border-radius: 12px; transition: all 0.3s; position: relative; min-width: 0; outline: none; }
+        .nav-item i { font-size: 1.1rem; color: var(--text-muted); transition: all 0.3s; }
+        .nav-item span { font-size: 0.6rem; color: var(--text-muted); font-weight: 500; transition: all 0.3s; white-space: nowrap; }
+        
+        /* PERUBAHAN: Animasi Bottom Nav Active */
+        .nav-item.active i, .nav-item.active span { color: var(--primary-light); }
+        .nav-item.active::before {
+            content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+            width: 20px; height: 2px; background: var(--gradient); border-radius: 0 0 4px 4px;
+        }
+
+        .nav-center { width: 44px; height: 44px; background: #0088cc; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; cursor: pointer; box-shadow: 0 8px 20px rgba(0, 136, 204, 0.4); transition: all 0.3s; margin-bottom: 8px; flex-shrink: 0; animation: telegram-float 3s infinite ease-in-out; outline: none; }
+        .nav-center i { animation: icon-pulse 2s infinite ease-in-out; margin-right: 2px; }
+        @keyframes telegram-float { 0%, 100% { transform: translateY(0); box-shadow: 0 8px 20px rgba(0,136,204,0.4); } 50% { transform: translateY(-4px); box-shadow: 0 12px 25px rgba(0,136,204,0.7); } }
+        @keyframes icon-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+
+        /* Toast & Loader */
+        .toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--card); border: 1px solid rgba(124,58,237,0.3); color: var(--text); padding: 10px 20px; border-radius: 12px; font-size: 0.78rem; font-weight: 500; z-index: 9999; opacity: 0; transition: all 0.3s ease; white-space: nowrap; box-shadow: 0 8px 24px rgba(0,0,0,0.4); pointer-events: none; display: flex; align-items: center; gap: 8px; }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        .toast i { color: var(--primary-light); }
+        .loader-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 10; border-radius: inherit; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+        .loader-overlay.active { opacity: 1; pointer-events: all; }
+        .loader-spinner { width: 40px; height: 40px; border: 3px solid rgba(124,58,237,0.3); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Desktop Adjustments */
+        @media (min-width: 768px) {
+            .video-layout { display: grid; grid-template-columns: 1fr 340px; gap: 24px; padding: 0 24px; max-width: 1200px; margin: 0 auto; }
+            .video-player-wrapper { border-radius: 16px; overflow: hidden; margin-top: 16px; }
+            .video-main { padding: 16px 0 30px; }
+            .video-sidebar { padding-top: 16px; padding-bottom: 30px; }
+            .bottom-nav { display: none; }
+            
+            /* PERUBAHAN: Header Padding di Desktop */
+            .header { padding: 20px 40px; }
+            
+            .video-actions { gap: 10px; }
+            .action-btn { padding: 10px 12px; font-size: 0.72rem; border-radius: 12px; }
+            .action-btn i { font-size: 0.85rem; }
+
+            .related-list { display: block; overflow-x: visible; padding-bottom: 0; margin: 0; }
+            .related-card { display: flex; flex-direction: row; width: 100%; padding: 10px; background: var(--card); border: 1px solid rgba(124, 58, 237, 0.15); margin-bottom: 12px; border-radius: 12px; }
+            .related-card:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(124, 58, 237, 0.2); }
+            .related-thumb { width: 140px; height: 79px; aspect-ratio: auto; border-radius: 8px; margin-bottom: 0; border: none; }
+            .related-play-overlay { background: rgba(0,0,0,0.3); }
+            .related-play-overlay i { background: transparent; width: auto; height: auto; box-shadow: none; font-size: 1.4rem; filter: drop-shadow(0 0 8px rgba(124,58,237,0.8)); color: white; }
+            .related-thumb-badge { top: auto; bottom: 5px; left: auto; right: 5px; }
+            .related-info { padding: 0 0 0 12px; display: flex; flex-direction: column; justify-content: center; }
+            .related-video-title { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; margin-bottom: 4px; }
+            .related-meta { display: flex; gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Toast Notification -->
+<div class="toast" id="toast">
+    <i class="fas fa-check-circle"></i>
+    <span id="toast-msg">Saved!</span>
+</div>
+
+<!-- PERUBAHAN: Header Persis Halaman Depan -->
+<div class="header">
+    <div class="logo">
+        <img src="https://javpornsub.net/assets/uploads/69871761766b2-68658059121ad-logo-1748094252.png" alt="StreamVibe Logo" class="site-logo">
+    </div>
+    <div class="header-actions">
+        <!-- Fungsi Back tetap ditambahkan pada icon home ini -->
+        <div class="icon-btn" onclick="history.back()"><i class="fas fa-home"></i></div>
+        <div class="icon-btn">
+            <i class="fas fa-bell"></i>
+            <span class="notif-badge">3</span>
+        </div>
+        <div class="avatar">JD</div>
+    </div>
+</div>
+
+<!-- Main Layout Wrapper -->
+<div class="video-layout">
+
+    <!-- Kiri / Main Video Area -->
+    <div>
+        <!-- Video Player Wrapper -->
+        <div class="video-player-wrapper" id="vp-wrapper">
+            <img class="video-thumbnail" id="vp-thumbnail" src="https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=1200&q=80" alt="Video Thumbnail">
+
+            <div class="loader-overlay" id="vp-loader">
+                <div class="loader-spinner"></div>
+            </div>
+
+            <div class="video-player-overlay" id="vp-overlay" onclick="togglePlay()">
+                <div class="big-play-btn" id="vp-play-icon">
+                    <i class="fas fa-play" style="color:white; margin-left:3px"></i>
+                </div>
+            </div>
+
+            <div class="video-controls" id="vp-controls">
+                <div class="video-progress-bar" id="vp-progress-bar" onclick="seekVideo(event)">
+                    <div class="video-progress-fill" id="vp-progress-fill"></div>
+                </div>
+                <div class="video-controls-row">
+                    <div class="ctrl-left">
+                        <button class="ctrl-btn" onclick="skipBack(event)"><i class="fas fa-backward"></i></button>
+                        <button class="ctrl-btn" id="ctrl-play-pause" onclick="togglePlay(event)"><i class="fas fa-play"></i></button>
+                        <button class="ctrl-btn" onclick="skipForward(event)"><i class="fas fa-forward"></i></button>
+                        <div class="volume-wrap">
+                            <button class="ctrl-btn" onclick="toggleMute(event)"><i class="fas fa-volume-up" id="vol-icon"></i></button>
+                            <div class="volume-slider">
+                                <input type="range" min="0" max="100" value="80" id="vol-range" oninput="setVolume(this.value)">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ctrl-right">
+                        <span class="ctrl-time" id="ctrl-time">00:00 / 00:00</span>
+                        <span class="quality-badge" onclick="changeQuality(event)">HD</span>
+                        <button class="ctrl-btn" onclick="toggleFullscreen(event)"><i class="fas fa-expand"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Video Informations -->
+        <div class="video-main">
+            <!-- Judul -->
+            <div class="video-title-row">
+                <div class="video-title-block">
+                    <div class="video-title" id="vp-title">Cosmic Odyssey</div>
+                    <span class="video-code" id="vp-code">COS-001</span>
+                </div>
+                <div class="video-bookmark-btn" id="vp-bookmark" onclick="toggleBookmark()">
+                    <i class="far fa-bookmark"></i>
+                </div>
+            </div>
+
+            <!-- Stats (Tanpa Tahun) -->
+            <div class="video-stats">
+                <span id="vp-views">2.4M views</span>
+                <div class="stat-divider"></div>
+                <span id="vp-duration">1h 48m</span>
+                <div class="stat-divider"></div>
+                <span id="vp-genre">english subtitle</span>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="video-actions">
+                <button class="action-btn" id="btn-like" onclick="toggleLike()">
+                    <i class="far fa-heart"></i> Like
+                </button>
+                <button class="action-btn" onclick="shareVideo()">
+                    <i class="fas fa-share-alt"></i> Share
+                </button>
+                <button class="action-btn" onclick="reportVideo()">
+                    <i class="fas fa-flag"></i> Report
+                </button>
+            </div>
+
+            <!-- Server Tabs -->
+            <div class="server-section">
+                <div class="server-label">Select Server</div>
+                <div class="server-tabs">
+                    <div class="server-tab active" onclick="switchServer(this, 1)">
+                        <i class="fas fa-server"></i> Server 1
+                    </div>
+                    <div class="server-tab" onclick="switchServer(this, 2)">
+                        <i class="fas fa-server"></i> Server 2
+                    </div>
+                    <div class="server-tab" onclick="switchServer(this, 4)">
+                        <i class="fas fa-bolt"></i> Fast
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tags -->
+            <div class="video-tags" id="vp-tags">
+                <span class="video-tag">#Big Tits</span>
+                <span class="video-tag">#Hot Spring</span>
+                <span class="video-tag">#Mature Woman</span>
+                <span class="video-tag">#Slut</span>
+            </div>
+
+            <!-- Actress Card -->
+            <div class="actress-card" id="vp-actress-card">
+                <img class="actress-card-avatar" id="vp-actress-img" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80" alt="Actress">
+                <div class="actress-card-info">
+                    <div class="actress-card-name" id="vp-actress-name">Emma S.</div>
+                    <div class="actress-card-stats">
+                        <span><i class="fas fa-film"></i> 48 Videos</span>
+                        <span><i class="fas fa-users"></i> 124K Followers</span>
+                    </div>
+                </div>
+                <button class="actress-follow-btn" id="vp-follow-btn" onclick="toggleFollow()">
+                    Follow
+                </button>
+            </div>
+
+            <!-- Deskripsi -->
+            <div class="video-desc-block">
+                <div class="desc-title">Description</div>
+                <div class="desc-text" id="vp-desc">A breathtaking journey through the cosmos where humanity faces its greatest challenge. An epic adventure blending stunning visuals with a deeply emotional story about survival, love, and the infinite possibilities of the universe. The crew of the starship Odyssey must navigate through uncharted nebulas and face alien civilizations in their quest to find a new home for mankind.</div>
+                <div class="desc-toggle" id="desc-toggle" onclick="toggleDesc()">
+                    <i class="fas fa-chevron-down" id="desc-icon"></i> Show More
+                </div>
+            </div>
+
+            <!-- Series Title -->
+            <div class="episode-section">
+                <div class="episode-header">
+                    <span class="episode-title">📺 Series : Cosmic Odyssey</span>
+                </div>
+            </div>
+
+            <!-- Komentar -->
+            <div class="comment-section">
+                <div class="comment-header">
+                    <span class="comment-title">💬 Comments</span>
+                    <span class="comment-count">284 comments</span>
+                </div>
+
+                <div class="comment-input-wrap">
+                    <div class="comment-avatar">JD</div>
+                    <div class="comment-input-box">
+                        <input type="text" id="comment-input" placeholder="Write a comment..." onkeydown="submitComment(event)">
+                        <div class="comment-send-btn" onclick="submitCommentBtn()">
+                            <i class="fas fa-paper-plane" style="color:white"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="comment-list">
+                    <div class="comment-item">
+                        <div class="comment-item-avatar">
+                            <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=80&q=80" alt="User">
+                        </div>
+                        <div class="comment-body">
+                            <div class="comment-name-row">
+                                <span class="comment-name">Emma_Fan99</span>
+                                <span class="comment-time">2 hours ago</span>
+                            </div>
+                            <div class="comment-text">Absolutely loved this! The cinematography is stunning and the story keeps you hooked from start to finish. 🔥</div>
+                            <div class="comment-actions">
+                                <span class="comment-like" onclick="likeComment(this)"><i class="far fa-heart"></i> 42</span>
+                                <span class="comment-reply" onclick="replyTo('Emma_Fan99')">Reply</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="comment-item">
+                        <div class="comment-item-avatar">
+                            <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=80&q=80" alt="User">
+                        </div>
+                        <div class="comment-body">
+                            <div class="comment-name-row">
+                                <span class="comment-name">StreamKing</span>
+                                <span class="comment-time">5 hours ago</span>
+                            </div>
+                            <div class="comment-text">Best thing I've watched this month. Can't wait for the next episode! The ending left me speechless 😮</div>
+                            <div class="comment-actions">
+                                <span class="comment-like" onclick="likeComment(this)"><i class="far fa-heart"></i> 28</span>
+                                <span class="comment-reply" onclick="replyTo('StreamKing')">Reply</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="comment-item">
+                        <div class="comment-item-avatar">
+                            <img src="https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=80&q=80" alt="User">
+                        </div>
+                        <div class="comment-body">
+                            <div class="comment-name-row">
+                                <span class="comment-name">MovieLover_X</span>
+                                <span class="comment-time">1 day ago</span>
+                            </div>
+                            <div class="comment-text">The production quality is top notch. Highly recommended for everyone. 10/10 would watch again!</div>
+                            <div class="comment-actions">
+                                <span class="comment-like" onclick="likeComment(this)"><i class="far fa-heart"></i> 15</span>
+                                <span class="comment-reply" onclick="replyTo('MovieLover_X')">Reply</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kanan / Sidebar Related Video -->
+    <div class="video-sidebar">
+        <div class="related-section">
+            <div class="related-title">🎬 Related Videos</div>
+
+            <div class="related-list">
+                <div class="related-card" onclick="loadMockVideo('Nebula Rising')">
+                    <div class="related-thumb">
+                        <img src="https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=400&q=80" alt="Nebula Rising">
+                        <div class="related-play-overlay"><i class="fas fa-play"></i></div>
+                        <div class="related-thumb-badge">SUB</div>
+                    </div>
+                    <div class="related-info">
+                        <div class="related-video-title">Nebula Rising</div>
+                        <div class="related-meta">
+                            <span>english subtitle</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="related-card" onclick="loadMockVideo('Dark Survival')">
+                    <div class="related-thumb">
+                        <img src="https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=400&q=80" alt="Dark Survival">
+                        <div class="related-play-overlay"><i class="fas fa-play"></i></div>
+                        <div class="related-thumb-badge">SUB</div>
+                    </div>
+                    <div class="related-info">
+                        <div class="related-video-title">Dark Survival</div>
+                        <div class="related-meta">
+                            <span>uncensored</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="related-card" onclick="loadMockVideo('Iron Guardian')">
+                    <div class="related-thumb">
+                        <img src="https://images.unsplash.com/photo-1608889825103-eb5ed706fc64?auto=format&fit=crop&w=400&q=80" alt="Iron Guardian">
+                        <div class="related-play-overlay"><i class="fas fa-play"></i></div>
+                        <div class="related-thumb-badge">SUB</div>
+                    </div>
+                    <div class="related-info">
+                        <div class="related-video-title">Iron Guardian</div>
+                        <div class="related-meta">
+                            <span>reducing mosaic</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="related-card" onclick="loadMockVideo('Shadow Files')">
+                    <div class="related-thumb">
+                        <img src="https://images.unsplash.com/photo-1559583985-c80d8ad9b29f?auto=format&fit=crop&w=400&q=80" alt="Shadow Files">
+                        <div class="related-play-overlay"><i class="fas fa-play"></i></div>
+                        <div class="related-thumb-badge">SUB</div>
+                    </div>
+                    <div class="related-info">
+                        <div class="related-video-title">Shadow Files</div>
+                        <div class="related-meta">
+                            <span>uncensored</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+<!-- PERUBAHAN: Bottom Nav ditambah fungsi klik animasi -->
+<div class="bottom-nav">
+    <div class="nav-item active" onclick="setNav(this); history.back()">
+        <i class="fas fa-home"></i>
+        <span>Home</span>
+    </div>
+    <div class="nav-item" onclick="setNav(this)">
+        <i class="fas fa-compass"></i>
+        <span>Explore</span>
+    </div>
+    <div class="nav-center">
+        <i class="fab fa-telegram-plane" style="color:white"></i>
+    </div>
+    <div class="nav-item" onclick="setNav(this)">
+        <i class="fas fa-bookmark"></i>
+        <span>Saved</span>
+    </div>
+    <div class="nav-item" onclick="setNav(this)">
+        <i class="fas fa-user"></i>
+        <span>Profile</span>
+    </div>
+</div>
+
+<script>
+// PERUBAHAN: Fungsi untuk ganti class active pada bottom nav
+function setNav(el) {
+    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+    el.classList.add('active');
+}
+
+// State Video Player
+let isPlaying = false;
+let isMuted   = false;
+let isBookmarked = false;
+let isFollowing  = false;
+let isLiked      = false;
+let descExpanded = false;
+let controlsTimer = null;
+let progressInterval = null;
+let fakeProgress = 0;
+
+// Logika Play & Video Controls
+function togglePlay(e) {
+    if (e) e.stopPropagation();
+    const overlay   = document.getElementById('vp-overlay');
+    const playIcon  = document.getElementById('vp-play-icon');
+    const ctrlBtn   = document.getElementById('ctrl-play-pause');
+    const controls  = document.getElementById('vp-controls');
+    const loader    = document.getElementById('vp-loader');
+
+    if (!isPlaying) {
+        loader.classList.add('active');
+        setTimeout(() => {
+            loader.classList.remove('active');
+            isPlaying = true;
+            playIcon.classList.add('hidden');
+            overlay.classList.add('playing');
+            ctrlBtn.innerHTML = '<i class="fas fa-pause"></i>';
+            controls.classList.add('visible');
+            startFakeProgress();
+            autoHideControls();
+        }, 800);
+    } else {
+        isPlaying = false;
+        playIcon.classList.remove('hidden');
+        overlay.classList.remove('playing');
+        ctrlBtn.innerHTML = '<i class="fas fa-play"></i>';
+        controls.classList.add('visible');
+        stopFakeProgress();
+        clearTimeout(controlsTimer);
+    }
+}
+
+function autoHideControls() {
+    clearTimeout(controlsTimer);
+    const controls = document.getElementById('vp-controls');
+    controlsTimer = setTimeout(() => {
+        if (isPlaying) controls.classList.remove('visible');
+    }, 3000);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const wrapper = document.getElementById('vp-wrapper');
+    if (wrapper) {
+        wrapper.addEventListener('mousemove', () => {
+            if (isPlaying) { document.getElementById('vp-controls').classList.add('visible'); autoHideControls(); }
+        });
+        wrapper.addEventListener('touchstart', () => {
+            if (isPlaying) { document.getElementById('vp-controls').classList.add('visible'); autoHideControls(); }
+        }, { passive: true });
+    }
+});
+
+// Simulasi Durasi Berjalan
+function startFakeProgress() {
+    stopFakeProgress();
+    progressInterval = setInterval(() => {
+        if (fakeProgress < 100) {
+            fakeProgress += 0.08;
+            document.getElementById('vp-progress-fill').style.width = fakeProgress + '%';
+            updateFakeTime();
+        } else {
+            stopFakeProgress();
+            isPlaying = false;
+            document.getElementById('vp-play-icon').classList.remove('hidden');
+            document.getElementById('vp-overlay').classList.remove('playing');
+            document.getElementById('ctrl-play-pause').innerHTML = '<i class="fas fa-play"></i>';
+        }
+    }, 100);
+}
+
+function stopFakeProgress() {
+    if (progressInterval) { clearInterval(progressInterval); progressInterval = null; }
+}
+
+function updateFakeTime() {
+    const totalSecs = 6480; // 1h 48m
+    const current   = Math.floor((fakeProgress / 100) * totalSecs);
+    const ch = Math.floor(current / 3600);
+    const cm = Math.floor((current % 3600) / 60);
+    const cs = current % 60;
+    const th = Math.floor(totalSecs / 3600);
+    const tm = Math.floor((totalSecs % 3600) / 60);
+    const ts = totalSecs % 60;
+    const fmt = (h, m, s) => h > 0 ? `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}` : `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    document.getElementById('ctrl-time').textContent = `${fmt(ch,cm,cs)} / ${fmt(th,tm,ts)}`;
+}
+
+// Interaksi Kontrol
+function seekVideo(e) {
+    const bar  = document.getElementById('vp-progress-bar');
+    const rect = bar.getBoundingClientRect();
+    const pct  = Math.max(0, Math.min(100, ((e.clientX - rect.left) / rect.width) * 100));
+    fakeProgress = pct;
+    document.getElementById('vp-progress-fill').style.width = pct + '%';
+    updateFakeTime();
+}
+
+function skipBack(e) { if (e) e.stopPropagation(); fakeProgress = Math.max(0, fakeProgress - 2); document.getElementById('vp-progress-fill').style.width = fakeProgress + '%'; updateFakeTime(); }
+function skipForward(e) { if (e) e.stopPropagation(); fakeProgress = Math.min(100, fakeProgress + 2); document.getElementById('vp-progress-fill').style.width = fakeProgress + '%'; updateFakeTime(); }
+function toggleMute(e) {
+    if (e) e.stopPropagation();
+    isMuted = !isMuted;
+    document.getElementById('vol-icon').className = isMuted ? 'fas fa-volume-mute' : 'fas fa-volume-up';
+    document.getElementById('vol-range').value = isMuted ? 0 : 80;
+}
+function setVolume(val) {
+    isMuted = (val == 0);
+    document.getElementById('vol-icon').className = val == 0 ? 'fas fa-volume-mute' : val < 50 ? 'fas fa-volume-down' : 'fas fa-volume-up';
+}
+function toggleFullscreen(e) {
+    if (e) e.stopPropagation();
+    const wrapper = document.getElementById('vp-wrapper');
+    if (!document.fullscreenElement) { wrapper.requestFullscreen && wrapper.requestFullscreen(); } 
+    else { document.exitFullscreen && document.exitFullscreen(); }
+}
+function changeQuality(e) {
+    if (e) e.stopPropagation();
+    const qualities = ['SD', 'HD', 'FHD', '4K'];
+    const badge = e.target;
+    badge.textContent = qualities[(qualities.indexOf(badge.textContent) + 1) % qualities.length];
+    showToast('<i class="fas fa-film"></i>', 'Quality: ' + badge.textContent);
+}
+
+// Action Buttons
+function toggleBookmark() {
+    isBookmarked = !isBookmarked;
+    const btn = document.getElementById('vp-bookmark');
+    btn.classList.toggle('saved', isBookmarked);
+    btn.innerHTML = isBookmarked ? '<i class="fas fa-bookmark"></i>' : '<i class="far fa-bookmark"></i>';
+    showToast(isBookmarked ? '<i class="fas fa-bookmark"></i>' : '<i class="far fa-bookmark"></i>', isBookmarked ? 'Added to Saved' : 'Removed from Saved');
+}
+function toggleBookmarkHeader() { showToast('<i class="fas fa-ellipsis-v"></i>', 'Options opened'); }
+function toggleLike() {
+    isLiked = !isLiked;
+    const btn = document.getElementById('btn-like');
+    btn.classList.toggle('like-active', isLiked);
+    btn.innerHTML = isLiked ? '<i class="fas fa-heart"></i> Liked' : '<i class="far fa-heart"></i> Like';
+    showToast(isLiked ? '<i class="fas fa-heart"></i>' : '<i class="far fa-heart"></i>', isLiked ? 'Added to Liked' : 'Removed from Liked');
+}
+function toggleFollow() {
+    isFollowing = !isFollowing;
+    const btn = document.getElementById('vp-follow-btn');
+    btn.textContent = isFollowing ? 'Following' : 'Follow';
+    btn.classList.toggle('following', isFollowing);
+    showToast(isFollowing ? '<i class="fas fa-user-check"></i>' : '<i class="fas fa-user-plus"></i>', isFollowing ? 'Now following' : 'Unfollowed');
+}
+function shareVideo() {
+    if (navigator.share) { navigator.share({ title: document.title, url: window.location.href }).catch(() => {}); } 
+    else { navigator.clipboard && navigator.clipboard.writeText(window.location.href); showToast('<i class="fas fa-share-alt"></i>', 'Link copied!'); }
+}
+function reportVideo() { showToast('<i class="fas fa-flag"></i>', 'Report submitted. Thank you!'); }
+
+function toggleDesc() {
+    descExpanded = !descExpanded;
+    const descEl = document.getElementById('vp-desc');
+    const toggleEl = document.getElementById('desc-toggle');
+    descEl.classList.toggle('expanded', descExpanded);
+    toggleEl.innerHTML = descExpanded ? '<i class="fas fa-chevron-up"></i> Show Less' : '<i class="fas fa-chevron-down"></i> Show More';
+}
+
+function switchServer(el, num) {
+    document.querySelectorAll('.server-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    const loader = document.getElementById('vp-loader');
+    const wasPlaying = isPlaying;
+    if (wasPlaying) { stopFakeProgress(); isPlaying = false; document.getElementById('ctrl-play-pause').innerHTML = '<i class="fas fa-play"></i>'; }
+    loader.classList.add('active');
+    setTimeout(() => {
+        loader.classList.remove('active');
+        showToast('<i class="fas fa-server"></i>', 'Switched to Server ' + num);
+        if (wasPlaying) { isPlaying = true; document.getElementById('ctrl-play-pause').innerHTML = '<i class="fas fa-pause"></i>'; startFakeProgress(); }
+    }, 900);
+}
+
+// Logika Komentar & Reply
+function submitComment(e) { if (e.key === 'Enter') submitCommentBtn(); }
+function submitCommentBtn() {
+    const input = document.getElementById('comment-input');
+    const text  = input.value.trim();
+    if (!text) return;
+    
+    const list = document.getElementById('comment-list');
+    const item = document.createElement('div');
+    item.className = 'comment-item';
+    item.innerHTML = `
+        <div class="comment-item-avatar" style="background:var(--gradient);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:600;color:white;border-radius:10px;">JD</div>
+        <div class="comment-body">
+            <div class="comment-name-row">
+                <span class="comment-name">You</span>
+                <span class="comment-time">Just now</span>
+            </div>
+            <div class="comment-text">${escapeHtml(text)}</div>
+            <div class="comment-actions">
+                <span class="comment-like" onclick="likeComment(this)"><i class="far fa-heart"></i> 0</span>
+                <span class="comment-reply" onclick="replyTo('You')">Reply</span>
+            </div>
+        </div>
+    `;
+    list.insertBefore(item, list.firstChild);
+    input.value = '';
+    
+    const countEl = document.querySelector('.comment-count');
+    if (countEl) { countEl.textContent = (parseInt(countEl.textContent) + 1) + ' comments'; }
+    showToast('<i class="fas fa-comment"></i>', 'Comment posted!');
+}
+
+function likeComment(el) {
+    const isLikedComment = el.classList.contains('liked');
+    const parts = el.innerHTML.split(' ');
+    const count = parseInt(parts[parts.length - 1]) || 0;
+    if (!isLikedComment) {
+        el.classList.add('liked');
+        el.innerHTML = '<i class="fas fa-heart"></i> ' + (count + 1);
+    } else {
+        el.classList.remove('liked');
+        el.innerHTML = '<i class="far fa-heart"></i> ' + Math.max(0, count - 1);
+    }
+}
+
+function replyTo(username) {
+    const input = document.getElementById('comment-input');
+    input.value = `@${username} `;
+    input.focus();
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.appendChild(document.createTextNode(text));
+    return div.innerHTML;
+}
+
+// Logika Toast UI
+let toastTimer = null;
+function showToast(icon, msg) {
+    const toast = document.getElementById('toast');
+    toast.innerHTML = icon + ' <span>' + msg + '</span>';
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { toast.classList.remove('show'); }, 2000);
+}
+
+// Mock Load Video Baru untuk Related Videos
+function loadMockVideo(title) {
+    document.getElementById('vp-header-title').innerText = title;
+    document.getElementById('vp-title').innerText = title;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    showToast('<i class="fas fa-film"></i>', 'Loading ' + title);
+}
+</script>
+
+</body>
+</html>
