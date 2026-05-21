@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actress Profile - StreamVibe</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary: #7C3AED;
+            --primary-light: #A78BFA;
+            --secondary: #EC4899;
+            --dark: #0A0A0F;
+            --dark-2: #12121A;
+            --dark-3: #1A1A2E;
+            --card: #16162A;
+            --text: #F8F8FF;
+            --text-muted: #9090A8;
+            --gold: #F59E0B;
+            --gradient: linear-gradient(135deg, #7C3AED, #EC4899);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--dark);
+            color: var(--text);
+            max-width: 1200px;
+            margin: 0 auto;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: var(--dark); }
+        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+
+        /* ===== HEADER ===== */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 14px 16px;
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(124, 58, 237, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .back-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            background: var(--card);
+            border: 1px solid rgba(124, 58, 237, 0.2);
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            transform: translateX(-2px);
+        }
+
+        .header-title {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            background: var(--card);
+            border: 1px solid rgba(124, 58, 237, 0.2);
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .icon-btn:hover {
+            background: var(--primary);
+        }
+
+        .icon-btn.active {
+            background: var(--gradient);
+            border-color: transparent;
+        }
+
+        /* ===== PROFILE HERO ===== */
+        .profile-hero {
+            position: relative;
+            padding: 30px 16px 20px;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .profile-bg-blur {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            opacity: 0.3;
+            filter: blur(40px);
+        }
+
+        .profile-bg-blur img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .profile-avatar {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .profile-avatar::before {
+            content: '';
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            background: conic-gradient(
+                from 0deg,
+                #7C3AED, #EC4899,
+                rgba(255,255,255,0.8),
+                #7C3AED
+            );
+            animation: spinRing 5s linear infinite;
+        }
+
+        .profile-avatar img {
+            position: relative;
+            z-index: 1;
+            width: calc(100% - 10px);
+            height: calc(100% - 10px);
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--dark);
+        }
+
+        @keyframes spinRing {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .profile-name {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .profile-tagline {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .profile-tagline .dot-sep {
+            width: 4px;
+            height: 4px;
+            background: var(--text-muted);
+            border-radius: 50%;
+        }
+
+        .profile-stats {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .profile-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            padding: 10px 24px;
+            background: var(--gradient);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(124, 58, 237, 0.5);
+        }
+
+        .btn-secondary {
+            padding: 10px 24px;
+            background: var(--card);
+            border: 1px solid rgba(124, 58, 237, 0.3);
+            border-radius: 12px;
+            color: var(--text);
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary:hover {
+            background: var(--dark-3);
+            border-color: var(--primary);
+        }
+
+        /* ===== BIO SECTION ===== */
+        .bio-section {
+            padding: 0 16px 20px;
+        }
+
+        .bio-card {
+            background: var(--card);
+            border: 1px solid rgba(124, 58, 237, 0.15);
+            border-radius: 16px;
+            padding: 16px;
+        }
+
+        .bio-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .bio-text {
+            font-size: 0.8rem;
+            line-height: 1.6;
+            color: var(--text-muted);
+        }
+
+        .bio-text.collapsed {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .read-more {
+            font-size: 0.75rem;
+            color: var(--primary-light);
+            cursor: pointer;
+            margin-top: 8px;
+            display: inline-block;
+        }
+
+        /* ===== INFO GRID ===== */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            padding: 0 16px 20px;
+        }
+
+        .info-item {
+            background: var(--card);
+            border: 1px solid rgba(124, 58, 237, 0.15);
+            border-radius: 12px;
+            padding: 12px;
+        }
+
+        .info-label {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .info-value {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        /* ===== TABS ===== */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            padding: 0 16px;
+            margin-bottom: 16px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .tabs::-webkit-scrollbar { display: none; }
+
+        .tab {
+            flex-shrink: 0;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: var(--card);
+            border: 1px solid rgba(124, 58, 237, 0.2);
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        .tab.active {
+            background: var(--gradient);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+        }
+
+        /* ===== MOVIE GRID ===== */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .section-count {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            padding: 0 16px 20px;
+        }
+
+        .movie-card {
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .movie-card:active {
+            transform: scale(0.97);
+        }
+
+        .movie-poster {
+            width: 100%;
+            aspect-ratio: 2/3;
+            border-radius: 12px;
+            background: var(--card);
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 6px;
+            border: 1px solid rgba(124, 58, 237, 0.15);
+        }
+
+        .movie-poster img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .movie-badge {
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            background: rgba(0,0,0,0.7);
+            color: var(--gold);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.55rem;
+            font-weight: 700;
+        }
+
+        .movie-rating {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            background: rgba(0,0,0,0.7);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.6rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .movie-rating i {
+            color: var(--gold);
+            font-size: 0.55rem;
+        }
+
+        .movie-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 2px;
+        }
+
+        .movie-meta {
+            font-size: 0.6rem;
+            color: var(--text-muted);
+        }
+
+        /* ===== AWARDS ===== */
+        .awards-scroll {
+            display: flex;
+            gap: 12px;
+            padding: 0 16px 20px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .awards-scroll::-webkit-scrollbar { display: none; }
+
+        .award-card {
+            flex-shrink: 0;
+            width: 180px;
+            background: var(--card);
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            border-radius: 12px;
+            padding: 14px;
+            text-align: center;
+        }
+
+        .award-icon {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 8px;
+            background: linear-gradient(135deg, #F59E0B, #EC4899);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            color: white;
+        }
+
+        .award-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .award-year {
+            font-size: 0.7rem;
+            color: var(--gold);
+        }
+
+        /* ===== DESKTOP ===== */
+        @media (min-width: 768px) {
+            .header { padding: 20px 40px; }
+            .profile-hero { padding: 50px 40px 30px; }
+            .profile-avatar { width: 180px; height: 180px; }
+            .profile-name { font-size: 2.2rem; }
+            .bio-section, .info-grid, .section-header, .tabs, .movie-grid, .awards-scroll {
+                padding-left: 40px;
+                padding-right: 40px;
+            }
+            .info-grid { grid-template-columns: repeat(4, 1fr); }
+            .movie-grid { grid-template-columns: repeat(5, 1fr); gap: 16px; }
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.5s ease forwards;
+        }
+
+        .delay-1 { animation-delay: 0.1s; opacity: 0; }
+        .delay-2 { animation-delay: 0.2s; opacity: 0; }
+        .delay-3 { animation-delay: 0.3s; opacity: 0; }
+        .delay-4 { animation-delay: 0.4s; opacity: 0; }
+
+        /* Tab content */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeInUp 0.4s ease;
+        }
+    </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header fade-in">
+    <a href="index.html" class="back-btn">
+        <i class="fas fa-arrow-left"></i>
+    </a>
+    <div class="header-title">Actress Profile</div>
+    <div class="header-actions">
+        <div class="icon-btn" id="shareBtn">
+            <i class="fas fa-share-alt"></i>
+        </div>
+        <div class="icon-btn" id="favBtn">
+            <i class="far fa-heart"></i>
+        </div>
+    </div>
+</div>
+
+<!-- PROFILE HERO -->
+<div class="profile-hero fade-in delay-1">
+    <div class="profile-bg-blur">
+        <img id="bgImage" src="" alt="">
+    </div>
+    <div class="profile-hero-content">
+        <div class="profile-avatar">
+            <img id="profileImage" src="" alt="Actress">
+        </div>
+        <h1 class="profile-name" id="profileName">Emma Stone</h1>
+        <div class="profile-tagline">
+            <span id="profileAge">28 years</span>
+            <span class="dot-sep"></span>
+            <span id="profileCountry"><i class="fas fa-map-marker-alt"></i> Japan</span>
+            <span class="dot-sep"></span>
+            <span id="profileDebut">Debut 2019</span>
+        </div>
+
+        <div class="profile-stats">
+            <div class="stat-item">
+                <div class="stat-number">142</div>
+                <div class="stat-label">Movies</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">2.4M</div>
+                <div class="stat-label">Fans</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">4.8</div>
+                <div class="stat-label">Rating</div>
+            </div>
+        </div>
+
+        <div class="profile-actions">
+            <button class="btn-primary" id="followBtn">
+                <i class="fas fa-plus"></i> Follow
+            </button>
+            <button class="btn-secondary">
+                <i class="fas fa-bell"></i> Notify
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- BIO -->
+<div class="bio-section fade-in delay-2">
+    <div class="bio-card">
+        <div class="bio-title">
+            <i class="fas fa-user-circle" style="color: var(--primary-light)"></i>
+            About
+        </div>
+        <p class="bio-text collapsed" id="bioText">
+            A talented and versatile actress who has captured audiences worldwide with her stunning performances. Known for her ability to portray complex characters with depth and authenticity. She started her career in 2019 and has since become one of the most sought-after talents in the industry. Her dedication to her craft and natural charisma make every role she plays unforgettable. She continues to push boundaries and explore new genres, building a remarkable filmography.
+        </p>
+        <span class="read-more" id="readMore">Read more</span>
+    </div>
+</div>
+
+<!-- INFO GRID -->
+<div class="info-grid fade-in delay-2">
+    <div class="info-item">
+        <div class="info-label"><i class="fas fa-birthday-cake"></i> Birthday</div>
+        <div class="info-value">Nov 6, 1995</div>
+    </div>
+    <div class="info-item">
+        <div class="info-label"><i class="fas fa-ruler-vertical"></i> Height</div>
+        <div class="info-value">165 cm</div>
+    </div>
+    <div class="info-item">
+        <div class="info-label"><i class="fas fa-tint"></i> Blood Type</div>
+        <div class="info-value">Type A</div>
+    </div>
+    <div class="info-item">
+        <div class="info-label"><i class="fas fa-star"></i> Zodiac</div>
+        <div class="info-value">Scorpio</div>
+    </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs fade-in delay-3">
+    <div class="tab active" data-tab="movies">Movies</div>
+    <div class="tab" data-tab="popular">Most Popular</div>
+    <div class="tab" data-tab="latest">Latest</div>
+    <div class="tab" data-tab="awards">Awards</div>
+</div>
+
+<!-- MOVIES TAB -->
+<div class="tab-content active" id="tab-movies">
+    <div class="section-header">
+        <span class="section-title">🎬 Filmography</span>
+        <span class="section-count">142 Movies</span>
+    </div>
+    <div class="movie-grid">
+        <div class="movie-card">
+            <div class="movie-poster">
+                <img src="https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=300&h=450&q=80" alt="">
+                <div class="movie-badge">SUB</div>
+                <div class="movie-rating"><i class="fas fa-star"></i>4.8</div>
+            </div>
+            <div class="movie-title">Nebula Rising</div>
+            <div class="movie-meta">2024 • 1h 45m</div>
+        </div>
+        <div class="movie-card">
+            <div class="movie-poster">
+                <img src="https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=300&h=450&q=80" alt="">
+                <div class="movie-badge">HD</div>
+                <div class="movie-rating"><i class="fas fa-star"></i>4.6</div>
+            </div>
+            <div class="movie-title">Dark Survival</div>
+            <div class="movie-meta">2024 • 2h 10m</div>
+        </div>
+        <div class="movie-card">
+            <div class="movie-poster">
+                <img src="https://images.unsplash.com/photo-1608889825103-eb5ed706fc64?auto=format&fit=crop&w=300&h=450&q=80" alt="">
+                <div class="movie-badge">SUB</div>
+                <div class="movie-rating"><i class="fas fa-star"></i>4.7</div>
+            </div>
+            <div class="movie-title">Iron Guardian</div>
+            <div class="movie-meta">2023 • 1h 55m</div>
+        </div>
+        <div class="movie-card">
+            <div class="movie-poster">
+                <img src="https://images.unsplash.com/photo-1559583985-c80d8ad9b29f?auto=format&fit=crop&w=300&h=450&q=80" alt="">
+                <div class="movie-badge">SUB</div>
+                <div class="movie-rating"><i class="fas fa-star"></i>4.5</div>
+            </div>
+            <div class="movie-title">Shadow Files</div>
+            <div class="movie-meta">2023 • 1h 30m</div>
+        </div>
+        <div class="movie-card">
+            <div class="movie-poster">
+                <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=300&h=450&q=80" alt="">
+                <div class="movie-badge">4K</div>
+                <div class="movie-rating"><i class="fas fa-star"></i>4.9</div>
+            </div>
+            <div class="movie-title">Magic Realm</div>
+            <div class="movie-meta">2023 • 2h 05m</div>
+        </div>
+        <div class="movie-card">
+            <div class="movie-poster">
+                <img src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=300&h=450&q=80" alt="">
+                <div class="movie-badge">SUB</div>
+                <div class="movie-rating"><i class="fas fa-star"></i>4.4</div>
+            </div>
+            <div class="```html
+            <div class="movie-title">AI Awakening</div>
+            <div class="movie-meta">2022 • 1h 50m</div>
+        </div>
+        <div class="movie-card">
+            <div class="movie-poster">
+                <img src="https://images.unsplash.com/photo-1509316785289-025f5b846b35?auto=format&fit=crop&w=300&h=450&q=80" alt="">
+                <div class="movie-badge">HD</div>
+                <div class="movie-rating"><i class="fas fa-star"></i>4.6</div>
+            </div>
+            <div class="movie-title">Desert Storm</div>
+            <div class="movie-meta">2022 • 2h 15m</div>
+        </div>
+        <div class="movie-card">
+            <div class="movie-poster">
+                <img src="https://images.unsplash.com/photo-1618336753974-aae8e04506aa?auto=format&fit=crop&w=300&h=450&q=80" alt="">
+                <div class="movie-badge">SUB</div>
+                <div class="movie-rating"><i class="fas fa-star"></i>4.7</div>
+            </div>
+            <div class="movie-title">Mind Warp</div>
+            <div class="movie-meta">2022 • 1h 40m</div>
+        </div>
+        <div class="movie-card">
+            <div class="movie-poster">
+                <img src="https://images.unsplash.com/photo-1500829243541-74b67eeccc18?auto=format&fit=crop&w=300&h=450&q=80" alt="">
+                <div class="movie-badge">4K</div>
+                <div class="movie-rating"><i class="fas fa-star"></i>4.8</div>
+            </div>
+            <div class="movie-title">Wild Earth</div>
+            <div class="movie-meta">2021 • 1h 55m</div>
+        </div>
+    </div>
+</div>
+
+<!-- POPULAR TAB -->
+<div class="tab-content" id="tab-popular">
+    <div class="section-header">
+        <span class="section-title">🔥 Most Popular</span>
+        <span class="section-count">Top 6</span>
+    </div>
+    <div class="movie-grid">
+        <div class="movie-card">
+            <div class="movie-poster">
+                <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=300&h=450&q=80" alt="">
+                <div class="movie-badge">#1</div>
+                <div class="movie-rating"><i class="fas fa-star"></i>4.9</div>
+            </div>
+            <div class="movie-title">Magic Realm</div>
+            <div class="movie-meta">2.4M views</div>
+        </div>
+        <div class="movie-card">
+            <div class="movie-poster">
+                <img src="https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=300&h=450&q=80" alt="">
+                <div class="movie-badge">#2</div>
+                <div class="movie-rating"><i class="fas fa-star"></i>4.8</div>
+            </div>
+            <div class="movie-title">Nebula Rising</div>
+            <div class="movie-meta">2.1M views</div>
+        </div>
+        <div class="movie-card">
+            <div class="movie-poster">
+                <img src="https://images.unsplash.com/photo-1500829243541-74b67eeccc18?auto=format&fit=crop&w=300&h=450&q=80" alt="">
+                <div class="movie-badge">#3</div>
+                <div class="movie-rating"><i class="fas fa-star"></i>4.8</div>
+            </div>
+            <div class="movie-title">Wild Earth</div>
+            <div class="movie-meta">1.8M views</div>
+        </div>
+        <div class="movie-card">
+            <div class="movie-poster">
+                <img src="https://images.unsplash.com/photo-1608889825103-eb5ed706fc64?auto=format&fit=crop&w=300&h=450&q=80" alt="">
+                <div class="movie-badge">#4</div>
+                <div class="movie-rating"><i class="fas fa-star"></i>4.7</div>
+            </div>
+            <div class="movie-title">Iron Guardian</div>
+            <div class="movie-meta">1.5M views</div>
+        </div>
+        <div class="movie-card">
+            <div class="movie-poster">
+                <img src="https://images.unsplash.com/photo-1618336753974-aae8e04506aa?auto=format&fit=crop&w=300&h=450&q=80" alt="">
+                <div class="movie-badge">#5</div>
+                <div class="movie-rating"><i class="fas fa-star"></i>4.7</div>
+            </div>
+            <div class="movie-title">Mind Warp</div>
+            <div class="movie-meta">1.3M views</div>
+        </div>
+        <div class="movie-card">
+            <div class="movie-poster">
+                <img src="https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=300&h=450&q=80" alt="">
+                <div class="movie-badge">#6</div>
+                <div class="movie-rating"><i class="fas fa-star"></i>4.6</div>
+            </div>
+            <div class="movie-title">Dark Survival</div>
+            <div class="movie-meta">1.1M views</div>
+        </div>
+    </div>
+</div>
+
+<!-- LATEST TAB -->
+<div class="tab-content" id="tab-latest">
+    <div class="section-header">
+        <span class="section-title">🆕 Latest Releases</span>
+        <span class="section-count">2024</span>
+    </div>
+    <div class="movie-grid">
+        <div class="movie-card">
+            <div class="movie-poster">
+                <img src="https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=300&h=450&q=80" alt="">
+                <div class="movie-badge">NEW</div>
+                <div class="movie-rating"><i class="fas fa-star"></i>4.8</div>
+            </div>
+            <div class="movie-title">Nebula Rising</div>
+            <div class="movie-meta">Dec 2024</div>
+        </div>
+        <div class="movie-card">
+            <div class="movie-poster">
+                <img src="https://images.unsplash.com/photo-1509248961158-e54f6934749c?auto=format&fit=crop&w=300&h=450&q=80" alt="">
+                <div class="movie-badge">NEW</div>
+                <div class="movie-rating"><i class="fas fa-star"></i>4.6</div>
+            </div>
+            <div class="movie-title">Dark Survival</div>
+            <div class="movie-meta">Nov 2024</div>
+        </div>
+        <div class="movie-card">
+            <div class="movie-poster">
+                <img src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=300&h=450&q=80" alt="">
+                <div class="movie-badge">HOT</div>
+                <div class="movie-rating"><i class="fas fa-star"></i>4.5</div>
+            </div>
+            <div class="movie-title">AI Awakening</div>
+            <div class="movie-meta">Oct 2024</div>
+        </div>
+    </div>
+</div>
+
+<!-- AWARDS TAB -->
+<div class="tab-content" id="tab-awards">
+    <div class="section-header">
+        <span class="section-title">🏆 Awards & Recognitions</span>
+        <span class="section-count">12 Awards</span>
+    </div>
+    <div class="awards-scroll">
+        <div class="award-card">
+            <div class="award-icon"><i class="fas fa-trophy"></i></div>
+            <div class="award-title">Best Actress</div>
+            <div class="award-year">2024</div>
+        </div>
+        <div class="award-card">
+            <div class="award-icon"><i class="fas fa-medal"></i></div>
+            <div class="award-title">Rising Star</div>
+            <div class="award-year">2023</div>
+        </div>
+        <div class="award-card">
+            <div class="award-icon"><i class="fas fa-award"></i></div>
+            <div class="award-title">Fan Favorite</div>
+            <div class="award-year">2023</div>
+        </div>
+        <div class="award-card">
+            <div class="award-icon"><i class="fas fa-crown"></i></div>
+            <div class="award-title">Best Newcomer</div>
+            <div class="award-year">2022</div>
+        </div>
+        <div class="award-card">
+            <div class="award-icon"><i class="fas fa-star"></i></div>
+            <div class="award-title">Top Performer</div>
+            <div class="award-year">2022</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ===== DATABASE ACTRESS =====
+    const actressData = {
+        'emma-s': {
+            name: 'Emma Stone',
+            image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=600&q=80',
+            age: '28 years',
+            country: 'Japan',
+            debut: 'Debut 2019',
+            birthday: 'Nov 6, 1995',
+            height: '165 cm',
+            blood: 'Type A',
+            zodiac: 'Scorpio'
+        },
+        'anya-t': {
+            name: 'Anya Taylor',
+            image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80',
+            age: '26 years',
+            country: 'USA',
+            debut: 'Debut 2020',
+            birthday: 'Apr 16, 1996',
+            height: '170 cm',
+            blood: 'Type B',
+            zodiac: 'Aries'
+        },
+        'chris-e': {
+            name: 'Chris Evans',
+            image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=600&q=80',
+            age: '30 years',
+            country: 'Korea',
+            debut: 'Debut 2018',
+            birthday: 'Jun 13, 1993',
+            height: '168 cm',
+            blood: 'Type O',
+            zodiac: 'Gemini'
+        },
+        'zendaya': {
+            name: 'Zendaya',
+            image: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=600&q=80',
+            age: '27 years',
+            country: 'USA',
+            debut: 'Debut 2017',
+            birthday: 'Sep 1, 1996',
+            height: '178 cm',
+            blood: 'Type A',
+            zodiac: 'Virgo'
+        },
+        'margot-r': {
+            name: 'Margot Robbie',
+            image: 'https://images.unsplash.com/photo-1554151228-14d9def656e4?auto=format&fit=crop&w=600&q=80',
+            age: '33 years',
+            country: 'Australia',
+            debut: 'Debut 2015',
+            birthday: 'Jul 2, 1990',
+            height: '168 cm',
+            blood: 'Type AB',
+            zodiac: 'Cancer'
+        },
+        'florence': {
+            name: 'Florence Pugh',
+            image: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80',
+            age: '28 years',
+            country: 'UK',
+            debut: 'Debut 2019',
+            birthday: 'Jan 3, 1996',
+            height: '160 cm',
+            blood: 'Type O',
+            zodiac: 'Capricorn'
+        },
+        'scarlett': {
+            name: 'Scarlett Johansson',
+            image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=600&q=80',
+            age: '39 years',
+            country: 'USA',
+            debut: 'Debut 2010',
+            birthday: 'Nov 22, 1984',
+            height: '160 cm',
+            blood: 'Type A',
+            zodiac: 'Sagittarius'
+        }
+    };
+
+    // ===== LOAD ACTRESS DATA FROM URL =====
+    function getQueryParam(name) {
+        const params = new URLSearchParams(window.location.search);
+        return params.get(name);
+    }
+
+    function loadActress() {
+        const actressId = getQueryParam('id') || 'emma-s';
+        const data = actressData[actressId] || actressData['emma-s'];
+
+        document.getElementById('profileName').textContent = data.name;
+        document.getElementById('profileImage').src = data.image;
+        document.getElementById('bgImage').src = data.image;
+        document.getElementById('profileAge').textContent = data.age;
+        document.getElementById('profileCountry').innerHTML = '<i class="fas fa-map-marker-alt"></i> ' + data.country;
+        document.getElementById('profileDebut').textContent = data.debut;
+
+        // Update info grid
+        const infoItems = document.querySelectorAll('.info-value');
+        infoItems[0].textContent = data.birthday;
+        infoItems[1].textContent = data.height;
+        infoItems[2].textContent = data.blood;
+        infoItems[3].textContent = data.zodiac;
+
+        // Update page title
+        document.title = data.name + ' - StreamVibe';
+    }
+
+    loadActress();
+
+    // ===== READ MORE =====
+    const readMoreBtn = document.getElementById('readMore');
+    const bioText = document.getElementById('bioText');
+
+    readMoreBtn.addEventListener('click', () => {
+        bioText.classList.toggle('collapsed');
+        readMoreBtn.textContent = bioText.classList.contains('collapsed') ? 'Read more' : 'Read less';
+    });
+
+    // ===== FOLLOW BUTTON =====
+    const followBtn = document.getElementById('followBtn');
+    let isFollowing = false;
+
+    followBtn.addEventListener('click', () => {
+        isFollowing = !isFollowing;
+        if (isFollowing) {
+            followBtn.innerHTML = '<i class="fas fa-check"></i> Following';
+            followBtn.style.background = 'var(--card)';
+            followBtn.style.border = '1px solid var(--primary)';
+        } else {
+            followBtn.innerHTML = '<i class="fas fa-plus"></i> Follow';
+            followBtn.style.background = 'var(--gradient)';
+            followBtn.style.border = 'none';
+        }
+    });
+
+    // ===== FAVORITE BUTTON =====
+    const favBtn = document.getElementById('favBtn');
+    let isFav = false;
+
+    favBtn.addEventListener('click', () => {
+        isFav = !isFav;
+        if (isFav) {
+            favBtn.classList.add('active');
+            favBtn.innerHTML = '<i class="fas fa-heart"></i>';
+        } else {
+            favBtn.classList.remove('active');
+            favBtn.innerHTML = '<i class="far fa-heart"></i>';
+        }
+    });
+
+    // ===== SHARE BUTTON =====
+    document.getElementById('shareBtn').addEventListener('click', () => {
+        if (navigator.share) {
+            navigator.share({
+                title: document.getElementById('profileName').textContent,
+                text: 'Check out this actress profile on StreamVibe!',
+                url: window.location.href
+            });
+        } else {
+            navigator.clipboard.writeText(window.location.href);
+            alert('Link copied to clipboard!');
+        }
+    });
+
+    // ===== TABS =====
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+            tab.classList.add('active');
+            const tabId = tab.dataset.tab;
+            document.getElementById('tab-' + tabId).classList.add('active');
+        });
+    });
+
+    // ===== MOVIE CARD CLICK =====
+    document.querySelectorAll('.movie-card').forEach(card => {
+        card.addEventListener('click', function(e) {
+            const ripple = document.createElement('span');
+            const rect = this.getBoundingClientRect();
+            ripple.style.cssText = `
+                position:absolute;
+                width:10px; height:10px;
+                background:rgba(124,58,237,0.4);
+                border-radius:50%;
+                transform:scale(0);
+                animation:ripple 0.6s linear;
+                left:${e.clientX - rect.left}px;
+                top:${e.clientY - rect.top}px;
+                pointer-events:none;
+                z-index:999;
+            `;
+            this.style.position = 'relative';
+            this.style.overflow = 'hidden';
+            this.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 600);
+        });
+    });
+
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes ripple {
+            to { transform: scale(40); opacity: 0; }
+        }
+    `;
+    document.head.appendChild(style);
+</script>
+
+</body>
+</html>
